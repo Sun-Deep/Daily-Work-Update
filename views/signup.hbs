@@ -2,14 +2,8 @@
     <div class="col-6">
         <div>
             <h4>Register User</h4>
-            <form class="">
-                <div class="form-row mt-5">
-                    <div class="col-md-12">
-                        <div class="position-relative form-group">
-                            <label for="email" class=""><span class="text-danger">*</span> Email</label>
-                            <input name="email" id="email" placeholder="Email here..." type="email" class="form-control" required>
-                        </div>
-                    </div>
+            <form method="POST" action="/admin/signup">
+                <div class="form-row mt-4">
                     <div class="col-md-12">
                         <div class="position-relative form-group">
                             <label for="name" class=""><span class="text-danger">*</span> Name</label>
@@ -18,8 +12,23 @@
                     </div>
                     <div class="col-md-12">
                         <div class="position-relative form-group">
+                            <label for="email" class=""><span class="text-danger">*</span> Email</label>
+                            <input name="email" id="email" placeholder="Email here..." type="email" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="position-relative form-group">
                             <label for="designation" class=""><span class="text-danger">*</span> Designation</label>
                             <input name="designation" id="designation" placeholder="Position here..." type="text" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="position-relative form-group">
+                            <label for="role" class=""><span class="text-danger">*</span> Role</label>
+                            <select name="role" id="role" class="form-control">
+                                <option value="0">Admin</option>
+                                <option value="1">Employee</option>
+                            </select>
                         </div>
                     </div>
                     <div class="col-md-12">
