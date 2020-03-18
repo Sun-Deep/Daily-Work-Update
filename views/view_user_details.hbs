@@ -1,0 +1,80 @@
+
+<div class="row">
+    <div class="col-4">
+        <img src="/images/dummy.png" alt="" class="img-fluid mb-3" style="width: 200px;">
+        <p><strong>Name : </strong> {{user.name}} <br>
+        <p><strong>Designation : </strong> {{user.designation}}</p>
+        <p><strong>Email : </strong>{{user.email}}</p>
+        <p><strong>Role : </strong>{{user.role}}</p>
+    </div>
+
+    <div class="col-8">
+        <div class="main-card mb-3 card">
+            <div class="card-body"><h5 class="card-title">Task Done List</h5>
+                <div class="scroll-area-sm">
+                    <div class="scrollbar-container ps--active-y ps">
+                       <table class="mb-0 table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Task Done</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each user_details}}
+                                <tr>
+                                    <td>{{work_date}}</td>
+                                    <td>{{task_done}}</td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+        
+                        
+                        <div class="ps__rail-x" style="left: 0px; bottom: 0px;">
+                            <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;">
+                            </div>
+                        </div>
+                        <div class="ps__rail-y" style="top: 0px; height: 400px; right: 0px;">
+                            <div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 152px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="main-card mb-3 card">
+            <div class="card-body"><h5 class="card-title">Task Todo List</h5>
+                <div class="scroll-area-sm">
+                    <div class="scrollbar-container ps--active-y ps">
+                       <table class="mb-0 table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Task Todo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each user_details}}
+                                <tr>
+                                    <td>{{work_date}}</td>
+                                    <td>{{task_to_do}}</td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                        
+                        <div class="ps__rail-x" style="left: 0px; bottom: 0px;">
+                            <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;">
+                            </div>
+                        </div>
+                        <div class="ps__rail-y" style="top: 0px; height: 400px; right: 0px;">
+                            <div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 152px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

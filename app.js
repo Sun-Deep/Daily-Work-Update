@@ -10,7 +10,12 @@ var app = express();
 
 var hbs = exhbs.create({
   defaultLayout: 'layout',
-  extname: '.hbs'
+  extname: '.hbs',
+  helpers: {
+    if: function(arg1, arg2, options){
+      return (arg1 == arg2) ? options.fn(this) : options.inverse(this)
+    }
+  }
 })
 
 // view engine setup

@@ -45,7 +45,7 @@ router.post('/signup', verify_route, verify_role, (req, res) => {
 
                 con.query("INSERT INTO users (NAME, email, designation, password, role) VALUES (?, ?, ?, ?, ?)",
                 [value.name, value.email, value.designation, hashPassword, value.role], (error, result, fields) => {
-                    res.redirect('/admin/signup')
+                    res.redirect('/admin/view_users')
                 })
             }
         })
@@ -85,11 +85,79 @@ router.post('/logincheck', (req, res) => {
 })
 
 
+// get the lists of the users
 router.get('/view_users', verify_route, verify_role, (req, res) => {
-    con.query("SELECT name, email, designation, role FROM users", (error, users, fields) => {
+    con.query("SELECT id, name, email, designation, role FROM users", (error, users, fields) => {
         res.render('view_users', {users: users})
     })
     
 })
 
+// get details of the user
+router.get('/view_user/details/:id', verify_route, verify_role, (req, res) => {
+    var id = req.params.id 
+    con.query("SELECT id, name, email, designation, role FROM users where id = ?",[id], (error, user, fields) => {
+        if (error){
+            throw error
+        }else{
+            if (user[0].role == 0){
+                user[0].role = "Admin"
+            }else{
+                user[0].role = "Employee"
+            }
+            con.query("SELECT user_details.task_done, user_details.task_to_do, DATE_FORMAT(user_details.work_date, '%b %d, %Y %a %k:%i:%s') AS work_date FROM user_details, users WHERE user_details.user_id = users.id AND user_details.user_id = ? ORDER BY user_details.work_date DESC",
+            [id], (error, user_details, fields) => {
+                res.render('view_user_details', {user: user[0], user_details: user_details})
+            })
+        }
+    })
+})
+
+
+// edit user
+router.get('/edit/user/:id', verify_route, verify_role, (req, res) => {
+    var id = req.params.id
+    con.query("SELECT * FROM users WHERE id = ?", [id], (error, user, fields) => {
+        res.render("edit_user", {user: user[0]})
+    })
+})
+
+router.post('/edit/user', verify_route, verify_role, (req, res) => {
+    const schema = Joi.object({
+        name: Joi.string().required(),
+        email: Joi.string().email().required(),
+        designation: Joi.string().required(),
+        password: Joi.string().min(5).required(),
+        role: Joi.number().required(),
+        id: Joi.number().required()
+    })
+
+    const {error, value} = schema.validate(req.body, {abortEarly: false})
+    
+    if(error){
+        console.log("error")
+        res.redirect('/admin/signup')
+    }else{
+        // check if user already exists
+        con.query("SELECT COUNT(id) AS id FROM users WHERE email = ?", [value.email], async (error, counter, fields) => {
+            if(counter[0].id > 0){
+                return res.status(400).send('Email Already Exists')
+            }else{
+                // hash password
+                const salt = await bcrypt.genSalt(10)
+                const hashPassword = await bcrypt.hash(value.password, salt)
+
+                con.query("UPDATE users SET NAME = ?, email = ?, designation = ?, password = ?, role = ? WHERE id = ?",
+                [value.name, value.email, value.designation, hashPassword, value.role, value.id], (error, result, fields) => {
+                   console.log(value)
+                    if (error){
+                        throw error
+                    }else{
+                        res.redirect('/admin/view_users')
+                    }
+                })
+            }
+        })
+    }
+})
 module.exports = router

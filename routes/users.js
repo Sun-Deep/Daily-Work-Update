@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
 })
 
 router.get('/main', verify_route, (req, res) => {
-    con.query("SELECT * FROM user_details WHERE user_id = ? ORDER BY work_date DESC LIMIT 1", [req.user_id], (error, results, fields) => {
+    con.query("SELECT id, task_done, task_to_do, DATE_FORMAT(work_date, '%b %d, %Y %a %k:%i:%s') AS work_date FROM user_details WHERE user_id = ? ORDER BY work_date DESC LIMIT 1", [req.user_id], (error, results, fields) => {
         if (error){
             throw error
         }else{
