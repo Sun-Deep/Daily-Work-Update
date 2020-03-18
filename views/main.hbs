@@ -37,11 +37,15 @@
         .btn-submit:hover{
             color: cornflowerblue;
         }
+        .left-main, .right-main{
+            color: white;
+        }
+        
         
     </style>
 </head>
 <body>
-   <div class="container mt-3">
+   <div class="container-fluid mt-3">
        <div class="row">
            <div class="col-8 mx-auto">
                <p id="date"></p>
@@ -50,21 +54,36 @@
             
         
        <div class="row">
-           <div class="col-8 mx-auto">
-                   <form action=""> 
+           <div class="col-2 left-main">
+               <h5>To Do List</h5>
+               <hr>
+               <p >{{results.task_to_do}}</p>
+               <span style="color: silver;">({{results.work_date}})</span> 
+
+               <br>
+               <hr>
+               <br>
+               <h5>What I did Yesterday ?</h5>
+               <p>{{results.task_done}}</p>
+               <span style="color: silver;">({{results.work_date}})</span> 
+           </div>
+           <div class="col-7 mx-auto">
+                   <form action="/main" method="POST"> 
                         <div class="form-group col-8 mx-auto">
-                            <textarea rows="10" class="form-control autosize-input did" placeholder="What You Did ?"></textarea>
+                            <textarea name="done" rows="10" class="form-control autosize-input did" placeholder="What You Did ?"></textarea>
                         </div>
                         <div class="form-group col-8 mx-auto mt-4">
-                            <textarea rows="10" class="form-control autosize-input did" placeholder="Tomorrow Plan ?"></textarea>
+                            <textarea name="todo" rows="10" class="form-control autosize-input did" placeholder="Tomorrow Plan ?"></textarea>
                         </div>
                         <div class="form-group col-8 mx-auto mt-4">
                             <center>
                                 <button type="submit" class="btn-wide mb-2 mr-2 btn btn-outline-light btn-lg btn-submit">Submit Details</button>
                             </center>
-                            
                         </div>
                     </form>
+               </div>
+               <div class="col-3 right-main">
+                  <h5>Project To Do</h5>
                </div>
            </div>
        </div>
