@@ -13,7 +13,7 @@
 
     <style>
         body{
-            background-color: cornflowerblue;
+            background-color: #404040;
             color: black;
             font-family: 'Courier New', Courier, monospace;
             line-height: 12px;
@@ -23,7 +23,7 @@
         }
         .did:focus{
             color: solid black;
-            box-shadow: 9px 3px 11px 11px rgba(0, 0, 0, 0.3);
+            box-shadow: 9px 3px 11px 11px rgba(153, 153, 153, 0.3);
             border-radius: 10px;
         }
         #date{
@@ -35,7 +35,7 @@
             color: white;
         }
         .btn-submit:hover{
-            color: cornflowerblue;
+            color: #404040;
         }
         .left-main, .right-main{
             color: white;
@@ -47,43 +47,54 @@
 <body>
    <div class="container-fluid mt-3">
        <div class="row">
-           <div class="col-8 mx-auto">
+           <div class="col-12 mx-auto">
                <p id="date"></p>
            </div>
        </div>
-            
-        
+
        <div class="row">
-           <div class="col-2 left-main">
+           <div class="col-3 left-main">
                <h5>To Do List</h5>
-               <hr>
+               <hr style="background-color: white;">
                <p >{{results.task_to_do}}</p>
                <span style="color: silver;">({{results.work_date}})</span> 
 
                <br>
-               <hr>
+               <hr style="background-color: white;">
                <br>
                <h5>What I did Yesterday ?</h5>
                <p>{{results.task_done}}</p>
                <span style="color: silver;">({{results.work_date}})</span> 
            </div>
-           <div class="col-7 mx-auto">
+           <div class="col-6">
                    <form action="/main" method="POST"> 
-                        <div class="form-group col-8 mx-auto">
-                            <textarea name="done" rows="10" class="form-control autosize-input did" placeholder="What You Did ?"></textarea>
+                        <div class="form-group col-12">
+                            <textarea name="done" rows="10"  class="form-control autosize-input did" placeholder="What You Did ?"></textarea>
                         </div>
-                        <div class="form-group col-8 mx-auto mt-4">
+                        <div class="form-group col-12 mt-4">
                             <textarea name="todo" rows="10" class="form-control autosize-input did" placeholder="Tomorrow Plan ?"></textarea>
                         </div>
-                        <div class="form-group col-8 mx-auto mt-4">
+                        <div class="form-group col-12 mt-4">
                             <center>
                                 <button type="submit" class="btn-wide mb-2 mr-2 btn btn-outline-light btn-lg btn-submit">Submit Details</button>
                             </center>
                         </div>
                     </form>
                </div>
-               <div class="col-3 right-main">
-                  <h5>Project To Do</h5>
+               <div class="col-3 right-main" style="margin-top: -30px;">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-danger dropdown-toggle" style="background: #404040; border:none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img src="/images/dummy.png" alt="" class="img-fluid" width="50px" style="border-radius: 50%;">
+                            <span style="color: white; font-size: 20px">{{results.name}}</span>
+                        </button>
+                        <div class="dropdown-menu form-group" style="padding: 10px;">
+                            <form action="/change_password" method="POST">
+                            <label for="password">Change Password</label>
+                                <input type="password" class="form-control" name="password" id="passowrd" minlength="5">
+                                <button type="submit" class="btn-wide mb-2 btn btn-lg btn-submit mt-2" style="background-color: #404040; color: white;">Change</button>
+                            </form>
+                        </div>
+                    </div>
                </div>
            </div>
        </div>

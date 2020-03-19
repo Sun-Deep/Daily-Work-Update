@@ -26,7 +26,8 @@ router.post('/signup', verify_route, verify_role, (req, res) => {
         email: Joi.string().email().required(),
         designation: Joi.string().required(),
         password: Joi.string().min(5).required(),
-        role: Joi.number().required()
+        role: Joi.number().required(),
+        status: Joi.number().required()
     })
 
     const {error, value} = schema.validate(req.body, {abortEarly: false})
@@ -43,8 +44,8 @@ router.post('/signup', verify_route, verify_role, (req, res) => {
                 const salt = await bcrypt.genSalt(10)
                 const hashPassword = await bcrypt.hash(value.password, salt)
 
-                con.query("INSERT INTO users (NAME, email, designation, password, role) VALUES (?, ?, ?, ?, ?)",
-                [value.name, value.email, value.designation, hashPassword, value.role], (error, result, fields) => {
+                con.query("INSERT INTO users (NAME, email, designation, password, role, status) VALUES (?, ?, ?, ?, ?, ?)",
+                [value.name, value.email, value.designation, hashPassword, value.role, value.status], (error, result, fields) => {
                     res.redirect('/admin/view_users')
                 })
             }
@@ -63,7 +64,7 @@ router.post('/logincheck', (req, res) => {
     const {error, value} = schema.validate(req.body, {abortEarly: false})
 
     if (error){
-        res.redirect('/')
+        res.redirect('/login')
     }else{
         con.query("SELECT * FROM users WHERE email = ? limit 1", [value.email], async (error, user, fields) => {
             if (Object.keys(user).length == 0){
@@ -87,7 +88,7 @@ router.post('/logincheck', (req, res) => {
 
 // get the lists of the users
 router.get('/view_users', verify_route, verify_role, (req, res) => {
-    con.query("SELECT id, name, email, designation, role FROM users", (error, users, fields) => {
+    con.query("SELECT id, name, email, designation, role, status FROM users", (error, users, fields) => {
         res.render('view_users', {users: users})
     })
     
@@ -96,7 +97,7 @@ router.get('/view_users', verify_route, verify_role, (req, res) => {
 // get details of the user
 router.get('/view_user/details/:id', verify_route, verify_role, (req, res) => {
     var id = req.params.id 
-    con.query("SELECT id, name, email, designation, role FROM users where id = ?",[id], (error, user, fields) => {
+    con.query("SELECT id, name, email, designation, role, status FROM users where id = ?",[id], (error, user, fields) => {
         if (error){
             throw error
         }else{
@@ -127,28 +128,19 @@ router.post('/edit/user', verify_route, verify_role, (req, res) => {
         name: Joi.string().required(),
         email: Joi.string().email().required(),
         designation: Joi.string().required(),
-        password: Joi.string().min(5).required(),
         role: Joi.number().required(),
+        status: Joi.number().required(),
         id: Joi.number().required()
     })
 
     const {error, value} = schema.validate(req.body, {abortEarly: false})
     
     if(error){
-        console.log("error")
+        console.log(error)
         res.redirect('/admin/signup')
     }else{
-        // check if user already exists
-        con.query("SELECT COUNT(id) AS id FROM users WHERE email = ?", [value.email], async (error, counter, fields) => {
-            if(counter[0].id > 0){
-                return res.status(400).send('Email Already Exists')
-            }else{
-                // hash password
-                const salt = await bcrypt.genSalt(10)
-                const hashPassword = await bcrypt.hash(value.password, salt)
-
-                con.query("UPDATE users SET NAME = ?, email = ?, designation = ?, password = ?, role = ? WHERE id = ?",
-                [value.name, value.email, value.designation, hashPassword, value.role, value.id], (error, result, fields) => {
+                con.query("UPDATE users SET name = ?, email = ?, designation = ?, role = ?, status = ? WHERE id = ?",
+                [value.name, value.email, value.designation, value.role, value.status, value.id], (error, result, fields) => {
                    console.log(value)
                     if (error){
                         throw error
@@ -156,8 +148,32 @@ router.post('/edit/user', verify_route, verify_role, (req, res) => {
                         res.redirect('/admin/view_users')
                     }
                 })
-            }
-        })
+            
     }
+})
+
+router.get('/inactive/user/:id', verify_route, verify_role, (req, res) => {
+    con.query("UPDATE users SET status = 0 WHERE id = ?", [req.params.id], (error, result, fields) => {
+        if (error){
+            throw error
+        }else{
+            res.redirect('/admin/view_users')
+        }
+    })
+})
+
+router.get('/inactive_users', verify_route, verify_role, (req, res) => {
+    con.query("SELECT id, name, email, designation, role, status FROM users WHERE status = 0", (error, users, fields) => {
+        res.render('inactive_users', {users: users})
+    })
+})
+router.get('/active/user/:id', verify_route, verify_role, (req, res) => {
+    con.query("UPDATE users SET status = 1 WHERE id = ?", [req.params.id], (error, result, fields) => {
+        if (error){
+            throw error
+        }else{
+            res.redirect('/admin/view_users')
+        }
+    })
 })
 module.exports = router

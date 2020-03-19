@@ -66,6 +66,25 @@
                     </button>
                 </span>
             </div>
+            <div class="app-header__content">
+                <div class="app-header-right">
+                    <div class="btn-group">
+                <button type="button" class="btn dropdown-toggle" style="border:none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img src="/images/dummy.png" alt="" class="img-fluid" width="50px" style="border-radius: 50%;">
+                    <span style="color: white; font-size: 20px">{{results.name}}</span>
+                </button>
+                <div class="dropdown-menu form-group" style="padding: 10px;">
+                    <form action="/change_password" method="POST">
+                    <label for="password">Change Password</label>
+                        <input type="password" class="form-control" name="password" id="passowrd" minlength="5">
+                        <button type="submit" class="btn-wide mb-2 mr-2 btn btn-lg btn-submit mt-2" style="background-color: cornflowerblue; color: white;">Change</button>
+                    </form>
+                </div>
+                </div>
+                </div>
+                
+            </div>
+            
         </div>
         
         <div class="app-main">
@@ -102,6 +121,7 @@
                         </button>
                     </span>
                 </div>
+
                 <div class="scrollbar-sidebar">
                     <div class="app-sidebar__inner">
                         <ul class="vertical-nav-menu">
@@ -127,11 +147,22 @@
                                     <li>
                                         <a href="/admin/view_users">
                                             <i class="metismenu-icon"></i>
-                                            View Users
+                                            View Active Users
                                         </a>
                                     </li>   
-                                    
+                                    <li>
+                                        <a href="/admin/inactive_users">
+                                            <i class="metismenu-icon"></i>
+                                            View Inactive Users
+                                        </a>
+                                    </li>   
                                 </ul>
+                            </li>
+                            <li>
+                                <a href="/" class="app-sidebar__heading">
+                                    <i class="metismenu-icon fas fa-home    "></i>
+                                    Home Page
+                                </a>
                             </li>
                         </ul>
                     </div>

@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken')
 module.exports = function(req, res, next) {
     const token = req.cookies.auth_token
     if(!token){
-        res.status(401).redirect('/')
+        res.status(401).redirect('/login')
     }
 
     try{
@@ -13,6 +13,6 @@ module.exports = function(req, res, next) {
         req.user_role = verified.role
         next()
     }catch(err){
-        res.status(401).redirect('/')
+        res.status(401).redirect('/login')
     }
 }
