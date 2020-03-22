@@ -56,15 +56,18 @@
            <div class="col-3 left-main">
                <h5>To Do List</h5>
                <hr style="background-color: white;">
-               <p >{{results.task_to_do}}</p>
-               <span style="color: silver;">({{results.work_date}})</span> 
-
-               <br>
-               <hr style="background-color: white;">
-               <br>
-               <h5>What I did Yesterday ?</h5>
-               <p>{{results.task_done}}</p>
-               <span style="color: silver;">({{results.work_date}})</span> 
+               {{!-- {{#each results}} --}}
+                    <p >{{todo.task_to_do}}</p>
+                    <span style="color: silver;">({{todo.work_date}})</span> 
+                {{!-- {{/each}} --}}
+                <br>
+                <hr style="background-color: white;">
+                <br>
+                <h5>Task Done</h5>
+                {{#each done}}
+                        <p class="mt-4">{{task_done}}</p>
+                        <span style="color: silver;">({{work_date}})</span> 
+                {{/each}}
            </div>
            <div class="col-6">
                    <form action="/main" method="POST"> 

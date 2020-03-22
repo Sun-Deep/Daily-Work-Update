@@ -6,17 +6,19 @@ const bcrypt = require('bcryptjs')
 
 
 
-router.get('/login', verify_route, (req, res) => {
+router.get('/login', (req, res) => {
     res.render('login', {layout: false})
 })
 
 
 router.get('/', verify_route, (req, res) => {
-    con.query("SELECT users.name, user_details.id, user_details.task_done, user_details.task_to_do, DATE_FORMAT(user_details.work_date, '%b %d, %Y %a %k:%i:%s') AS work_date FROM user_details, users WHERE user_details.user_id = users.id AND user_id = ? ORDER BY work_date DESC LIMIT 1", [req.user_id], (error, results, fields) => {
+    con.query("SELECT users.name, user_details.id, user_details.task_done, user_details.task_to_do, DATE_FORMAT(user_details.work_date, '%b %d, %Y %a %k:%i:%s') AS work_date FROM user_details, users WHERE user_details.user_id = users.id AND user_id = ? ORDER BY work_date DESC LIMIT 5",
+     [req.user_id], (error, results, fields) => {
         if (error){
             throw error
         }else{
-            res.render('main', {layout: false, results: results[0]})
+            console.log(results)
+            res.render('main', {layout: false, todo: results[0], done: results})
         }
     })
     

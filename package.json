@@ -1,9 +1,9 @@
 {
-  "name": "dailywork",
+  "name": "workupdate",
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www"
+    "start": "nodemon app"
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
