@@ -10,8 +10,13 @@ const verify_role = require('./verify_role')
 
 
 router.get('/', verify_route, verify_role, (req, res) => {
-    con.query("SELECT COUNT(id) AS total FROM users WHERE role = 1", (error, total_employee, fields) => {
-        res.render('dashboard', {total_employee: total_employee[0]})
+    con.query("SELECT * FROM users WHERE role = 1", (error, employee, fields) => {
+        if (error){
+            throw error
+        }else{
+            const total = Object.keys(employee).length
+            res.render('dashboard', {total_employee: total, employee: employee})
+        }
     })
     
 })
@@ -175,5 +180,84 @@ router.get('/active/user/:id', verify_route, verify_role, (req, res) => {
             res.redirect('/admin/view_users')
         }
     })
+})
+
+// projects
+// add new projects
+router.get('/add_project', verify_route, verify_role, (req, res) => {
+    res.render('add_project')
+})
+
+router.post('/add_project', verify_route, verify_role, (req, res) => {
+    const schema = Joi.object({
+        project_name: Joi.string().required(),
+        frontend_language: Joi.string().required(),
+        backend_language: Joi.string().required(),
+        project_details: Joi.string().required()
+    })
+
+    const {error, value} = schema.validate(req.body, {abortEarly: false})
+    if (error){
+        throw error
+    }else{
+        con.query("INSERT INTO projects (NAME, frontend, backend, details) VALUES (?, ?, ?, ?)",
+        [value.project_name, value.frontend_language, value.backend_language, value.project_details], (error, results, fields) => {
+            if (error){
+                throw error
+            }else{
+                res.send("Saved Successfully")
+            }
+        })
+    }
+})
+
+
+router.get('/add_project_todo', verify_route, verify_role, (req, res) => {
+    con.query("SELECT id, name FROM projects", (error, projects, fields) => {
+        if (error){
+            throw error
+        }else{
+            res.render('add_project_todo', {projects: projects})
+        }
+    })
+})
+
+router.post('/add_project_todo', verify_route, verify_role, (req, res) => {
+    console.log(req.body)
+    let project_id = req.body.project
+    console.log(req.body["project_todo" + 1])
+    con.beginTransaction((err) => {
+        if (err){
+            throw err
+        }else{
+            for(let i = 0; i < Object.keys(req.body).length; i++){
+                if (i == 0){
+                    continue
+                }else{
+                    let todo = req.body["project_todo" + i]
+                    console.log(todo)
+                    con.query("INSERT INTO projects_todo (todo, project_id) VALUES (?, ?)",
+                    [todo, project_id], (error, results, fields) => {
+                        if(error){
+                            return con.rollback(() => {
+                                throw error
+                            })
+                        }
+                    })
+                }
+            }
+            con.commit((err) => {
+                return con.rollback(() => {
+                    throw err
+                })
+            })
+            res.json("Saved Successfully")
+        }
+        
+    })
+})
+
+router.get('/assign_programmer', verify_route, verify_route, (req, res) => {
+    res.render('assign_programmer')
 })
 module.exports = router

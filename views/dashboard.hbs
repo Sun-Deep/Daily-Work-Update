@@ -1,18 +1,30 @@
 <div class="row">
-    <div class="col-4">
-        <div class="card" style="width: 18rem;">
-            <div class="card-body">
-                <h5 class="card-title">Total Number of Employee</h5>
-                <a href="#" class="btn btn-primary">{{total_employee.total}}</a>
-            </div>
-        </div>
+
+    {{!-- Todo (today) --}}
+    <div class="col-6">
         
     </div>
-    <div class="card" style="width: 18rem;">
-        <div class="card-body">
-            <h5 class="card-title">Total OnGoing Project</h5>
-            <a href="#" class="btn btn-primary">-</a>
+
+    {{!-- Projects lists --}}
+    <div class="col-3">
+
+    </div>
+
+    {{!-- list of the users --}}
+    <div class="col-3" id="scroll">
+        <h4 class="mb-4">Total Employee: <span style="color: cornflowerblue;">{{total_employee}}</span></h4>
+        {{#each employee}}
+        <a href="/admin/view_user/details/{{id}}" style="text-decoration: none; color:#495057">
+            <div class="name_list">
+            <p>{{name}}</p>
         </div>
+        </a>
+        {{/each}}
     </div>
 </div>
 
+<script>
+        // setting content width as device width
+    let deviceHeight = window.innerHeight - 90
+    document.getElementById("scroll").style.height = deviceHeight + "px";
+</script>

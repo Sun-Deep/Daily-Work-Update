@@ -27,6 +27,18 @@
     <script type="text/javascript" src="/javascripts/jquery.min.js"></script>
     <script type="text/javascript" src="/javascripts/main.js"></script>
     <script type="text/javascript" src="/javascripts/toastr.min.js"></script>
+
+    <style>
+        .name_list{
+            font-weight: bold;
+            font-size: 16px;
+            border-bottom: 1px solid silver;
+            margin-top: 9px;
+        }
+        #scroll{
+            overflow-y: scroll;
+        }
+    </style>
     
 </head>
 
@@ -161,8 +173,41 @@
                             <li>
                                 <a href="/" class="app-sidebar__heading">
                                     <i class="metismenu-icon fas fa-home    "></i>
-                                    Home Page
+                                    Daily Status
                                 </a>
+                            </li>
+                            <li>
+                                <a href="#" class="app-sidebar__heading">
+                                    <i class="metismenu-icon fas fa-puzzle-piece"></i>
+                                    Projects
+                                    <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                                </a>
+                                <ul>
+                                    <li>
+                                        <a href="/admin/add_project">
+                                            <i class="metismenu-icon"></i>
+                                            Add New Project
+                                        </a>
+                                    </li> 
+                                    <li>
+                                        <a href="/admin/add_project_todo">
+                                            <i class="metismenu-icon"></i>
+                                            Add Project Todo
+                                        </a>
+                                    </li>   
+                                    <li>
+                                        <a href="/admin/inactive_users">
+                                            <i class="metismenu-icon"></i>
+                                            Edit Project Details
+                                        </a>
+                                    </li>  
+                                    <li>
+                                        <a href="/admin/assign_programmer">
+                                            <i class="metismenu-icon"></i>
+                                            Assign Programmer
+                                        </a>
+                                    </li> 
+                                </ul>
                             </li>
                         </ul>
                     </div>

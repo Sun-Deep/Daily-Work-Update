@@ -1,0 +1,53 @@
+<div class="col-md-10 mx-auto">
+    <div class="main-card mb-3 card">
+        <div class="card-body"><h5 class="card-title">Assign Programmer</h5>
+            <form class="">
+                
+                <div class="position-relative form-group">
+                    <label for="programmer" class="">Select Programmer</label>
+                    <select name="programmer" id="programmer" class="form-control">
+                        <option value="">-- Select --</option>
+                        {{!-- add programmer list --}}
+                    </select>
+                </div>
+
+                <div class="position-relative form-group">
+                    <label for="designation" class="">Select Designation</label>
+                    <select name="designation" id="designation" class="form-control">
+                        <option value="">-- Select --</option>
+                        {{!-- add designation list --}}
+                    </select>
+                </div>
+
+                <div class="position-relative form-group">
+                    <label for="project" class="">Select Project</label>
+                    <select name="project" id="project" class="form-control">
+                        <option value="">-- Select --</option>
+                        {{!-- add project list --}}
+                    </select>
+                </div>
+
+                <div class="position-relative form-group">
+                    <label for="project_todo" class="">Select Project</label>
+                    <select name="project_todo" id="project_todo" class="form-control">
+                        <option value="">-- Select --</option>
+                        {{!-- add project todo list with multiselect --}}
+                    </select>
+                </div>
+
+                <button class="mt-1 btn btn-primary" type="submit">Assign</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // add new input filed for project todo
+    let todoID = 2
+    function addnew_todo(){
+        let name = "project_todo" + todoID
+        var result = '<input type="text" name="'+name+'" id="'+name+'" class="form-control mb-3">'
+        document.getElementById("projectTodo").innerHTML += result
+        todoID += 1
+    }
+</script>

@@ -1,0 +1,37 @@
+<div class="col-md-10 mx-auto">
+    <div class="main-card mb-3 card">
+        <div class="card-body"><h5 class="card-title">Add New Project</h5>
+            <form method="POST" action="/admin/add_project">
+                <div class="position-relative form-group">
+                    <label for="project_name" class="">Name</label>
+                    <input name="project_name" id="project_name" required placeholder="Project Name Here..." type="text" class="form-control">
+                </div>
+                <div class="position-relative form-group">
+                    <label for="frontend_language" class="">Front-End Languages</label>
+                    <select name="frontend_language" id="frontend_language" class="form-control" required>
+                        <option value="">-- Select --</option>
+                        <option value="Bootstrap / JavaScript">Bootstrap / JavaScript</option>
+                        <option value="ReactJS">ReactJS</option>
+                        <option value="VueJS">VueJS</option>
+                        <option value="HTML / CSS">HTML / CSS</option>
+                    </select>
+                </div>
+                <div class="position-relative form-group">
+                    <label for="backend_language" class="">Back-End Langauges</label>
+                    <select name="backend_language" id="backend_language" class="form-control" required>
+                        <option value="">-- Select --</option>
+                        <option value="Laravel / PHP">Laravel / PHP</option>
+                        <option value="NodeJS">NodeJS</option>
+                        <option value="Wordpress">Wordpress</option>
+                    </select>
+                </div>
+                <div class="position-relative form-group">
+                    <label for="project_details" class="">Project Details</label>
+                    <textarea name="project_details" id="project_details" required rows="5" class="form-control"></textarea>
+                </div>
+                
+                <button class="mt-1 btn btn-primary" type="submit">Add</button>
+            </form>
+        </div>
+    </div>
+</div>
