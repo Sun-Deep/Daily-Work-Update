@@ -251,13 +251,76 @@ router.post('/add_project_todo', verify_route, verify_role, (req, res) => {
                     throw err
                 })
             })
-            res.json("Saved Successfully")
+            return res.json("Saved Successfully")
+
         }
         
     })
 })
 
+router.get('/project_todos/:id', verify_route, verify_role, (req, res) => {
+    let project_id = req.params.id
+    con.query("SELECT id, todo FROM projects_todo WHERE project_id = ? AND STATUS = 0",[project_id],
+    (error, todos, fields) => {
+        // console.log(todos)
+        return res.json(todos)
+    })
+})
+
+
 router.get('/assign_programmer', verify_route, verify_route, (req, res) => {
-    res.render('assign_programmer')
+    con.query("SELECT id, name FROM users WHERE STATUS = 1", (error, users, fields) => {
+        if (error){
+            throw error
+        }else{
+            con.query("SELECT id, name FROM projects WHERE STATUS = 1", (error, projects, fields) => {
+                if (error){
+                    throw error
+                }
+                res.render('assign_programmer', {users: users, projects: projects})
+            })
+        }
+    })
+})
+
+// assign todos and and project to programmer
+router.post('/assign_programmer', verify_route, verify_role, (req, res) => {
+    con.beginTransaction((err) => {
+        if (err){
+            throw err
+        }else{
+            con.query("INSERT INTO assigned_projects (user_id, designation, project_id) VALUES (?, ?, ?)",
+            [req.body.programmer, req.body.designation, req.body.project], (error, results, fields) => {
+                if (error){
+                    return con.rollback(() => {
+                        throw error
+                    })
+                }
+                console.log(results)
+                let project_todo = req.body.project_todo
+                console.log(project_todo)
+                for(let i = 0; i < project_todo.length; i++){
+                    con.query("INSERT INTO assigned_todos (assigned_projects_id, assigned_todo) VALUES (?, ?)",
+                    [results.insertId, project_todo[i]], (error, result1, fields) => {
+                        if (error){
+                            return con.rollback(() => {
+                                throw error
+                            })
+                        }
+                        con.commit((err) => {
+                            if (err){
+                                return con.rollback(() => {
+                                    throw err
+                                })
+                            }
+                        })
+                        return res.json("Saved Successfully")
+                    })
+                }
+            })
+        }
+        
+    })
+    
 })
 module.exports = router
