@@ -14,11 +14,17 @@ router.get('/', verify_route, verify_role, (req, res) => {
         if (error){
             throw error
         }else{
-            const total = Object.keys(employee).length
-            res.render('dashboard', {total_employee: total, employee: employee})
+            const total_employee = Object.keys(employee).length
+            con.query("SELECT id, name FROM projects", (error, projects, fields) => {
+                if (error){
+                    throw error
+                }else{
+                    const total_projects = Object.keys(projects).length
+                    res.render('dashboard', {total_employee: total_employee, employee: employee, total_projects: total_projects, projects: projects})
+                }
+            })
         }
-    })
-    
+    })  
 })
 
 router.get('/signup', verify_route, verify_role, (req, res) => {
@@ -260,7 +266,7 @@ router.post('/add_project_todo', verify_route, verify_role, (req, res) => {
 
 router.get('/project_todos/:id', verify_route, verify_role, (req, res) => {
     let project_id = req.params.id
-    con.query("SELECT id, todo FROM projects_todo WHERE project_id = ? AND STATUS = 0",[project_id],
+    con.query("SELECT id, todo, status FROM projects_todo WHERE project_id = ?",[project_id],
     (error, todos, fields) => {
         // console.log(todos)
         return res.json(todos)
@@ -268,7 +274,7 @@ router.get('/project_todos/:id', verify_route, verify_role, (req, res) => {
 })
 
 
-router.get('/assign_programmer', verify_route, verify_route, (req, res) => {
+router.get('/assign_programmer', verify_route, verify_role, (req, res) => {
     con.query("SELECT id, name FROM users WHERE STATUS = 1", (error, users, fields) => {
         if (error){
             throw error
@@ -296,9 +302,9 @@ router.post('/assign_programmer', verify_route, verify_role, (req, res) => {
                         throw error
                     })
                 }
-                console.log(results)
+                // console.log(results)
                 let project_todo = req.body.project_todo
-                console.log(project_todo)
+                // console.log(project_todo)
                 for(let i = 0; i < project_todo.length; i++){
                     con.query("INSERT INTO assigned_todos (assigned_projects_id, assigned_todo) VALUES (?, ?)",
                     [results.insertId, project_todo[i]], (error, result1, fields) => {
@@ -307,20 +313,24 @@ router.post('/assign_programmer', verify_route, verify_role, (req, res) => {
                                 throw error
                             })
                         }
-                        con.commit((err) => {
-                            if (err){
-                                return con.rollback(() => {
-                                    throw err
-                                })
-                            }
-                        })
-                        return res.json("Saved Successfully")
                     })
                 }
+                con.commit((err) => {
+                    if (err){
+                        return con.rollback(() => {
+                            throw err
+                        })
+                    }
+                    return res.json("Saved Successfully")
+                })
             })
-        }
-        
+        }  
     })
-    
 })
+
+// view all todos
+router.get('/view_todos', verify_route, verify_role, (req, res) => {
+    res.render('view_todos')
+})
+
 module.exports = router

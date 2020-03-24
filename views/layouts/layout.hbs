@@ -26,8 +26,9 @@
     {{!-- <link rel="stylesheet" href="/stylesheets/bootstrap-select.min.css"> --}}
 
     <script type="text/javascript" src="/javascripts/jquery.min.js"></script>
-    <script type="text/javascript" src="/javascripts/main.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>
     <script type="text/javascript" src="/javascripts/toastr.min.js"></script>
+    <script type="text/javascript" src="/javascripts/main.js"></script>
     {{!-- <script type="text/javascript" src="/javascripts/bootstrap-select.min.js"></script> --}}
 
 
@@ -40,6 +41,13 @@
         }
         #scroll{
             overflow-y: scroll;
+            border-radius: 10px;
+            /*background-color: rgb(221, 226, 228);*/
+            padding: 10px;
+        }
+        #todo{
+            font-weight: bold;
+            font-size: 16px;
         }
     </style>
     
@@ -141,6 +149,12 @@
                     <div class="app-sidebar__inner">
                         <ul class="vertical-nav-menu">
                             <li>
+                                <a href="/" class="app-sidebar__heading">
+                                    <i class="metismenu-icon fas fa-home    "></i>
+                                    Daily Status
+                                </a>
+                            </li>
+                            <li>
                                 <a href="/admin" class="app-sidebar__heading">
                                     <i class="metismenu-icon fas fa-tachometer-alt"></i>
                                     Dashboard
@@ -173,12 +187,7 @@
                                     </li>   
                                 </ul>
                             </li>
-                            <li>
-                                <a href="/" class="app-sidebar__heading">
-                                    <i class="metismenu-icon fas fa-home    "></i>
-                                    Daily Status
-                                </a>
-                            </li>
+                            
                             <li>
                                 <a href="#" class="app-sidebar__heading">
                                     <i class="metismenu-icon fas fa-puzzle-piece"></i>
@@ -210,6 +219,12 @@
                                             Assign Programmer
                                         </a>
                                     </li> 
+                                    <li>
+                                        <a href="/admin/view_todos">
+                                            <i class="metismenu-icon"></i>
+                                            View Todos
+                                        </a>
+                                    </li> 
                                 </ul>
                             </li>
                         </ul>
@@ -229,6 +244,29 @@
         </div>
     </div>
 
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" role="dialog" tabindex="-1" aria-labelledby="exampleModalLabel" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit Todo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+               <form action="/edit/todos/:id" method="POST">
+                <div class="form-group">
+                        <input type="text" class="form-control" id="todo" name="todo">
+                </div>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Update</button>
+               </form>
+            </div>
+         
+        </div>
+    </div>
+</div>
 </body>
 
 </html>

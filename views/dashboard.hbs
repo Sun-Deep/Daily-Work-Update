@@ -1,18 +1,33 @@
 <div class="row">
 
     {{!-- Todo (today) --}}
-    <div class="col-6">
-        
+    <div class="col-6" id="scroll">
+        <h5 class="mb-4">Todo List</h5>
+        <hr>
+        <div id="todo_container">
+            <div id="todo">
+
+            </div>
+        </div>
     </div>
 
     {{!-- Projects lists --}}
-    <div class="col-3">
-
+    <div class="col-3" id="scroll">
+        <h5 class="mb-4">Project List [{{total_projects}}]</h5>
+        <hr>
+        {{#each projects}}
+        <button type="button" onclick="todos({{id}})" class="btn btn-default" style="text-align: left;">
+            <div class="name_list">
+            <p>{{name}}</p>
+        </div>
+        </button>
+        {{/each}}
     </div>
 
     {{!-- list of the users --}}
     <div class="col-3" id="scroll">
-        <h4 class="mb-4">Total Employee: <span style="color: cornflowerblue;">{{total_employee}}</span></h4>
+        <h5 class="mb-4">Employee Name [{{total_employee}}]</h5>
+        <hr>
         {{#each employee}}
         <a href="/admin/view_user/details/{{id}}" style="text-decoration: none; color:#495057">
             <div class="name_list">
@@ -27,4 +42,31 @@
         // setting content width as device width
     let deviceHeight = window.innerHeight - 90
     document.getElementById("scroll").style.height = deviceHeight + "px";
+
+    //for todos
+    function todos(id){
+        let project_id = id
+        $("#todo").remove()
+        $("#todo_container").append('<div id="todo">')
+        $.ajax({
+            type: 'GET',
+            url: '/admin/project_todos/'+ project_id,
+            success: (data) => {
+                if (data.length > 0){
+                    var result = ''
+                    let anchor = ''
+                    for (let i = 0; i < data.length; i++){
+                        if(data[i].status == 0){
+                            anchor = '<a href="/edit/project_todos/status/'+data[i].id+'/'+ data[i].status+'" class="btn btn-outline-info btn-sm ml-3">incomplete</a>'
+                        }else{
+                             anchor = '<a href="/edit/project_todos/status/'+data[i].id+'/'+ data[i].status+'" class="btn btn-success btn-sm ml-3">completed</a>'
+                        }
+                        result += '<p>'+data[i].todo +' '+ anchor+'</p>'
+                    }
+                    result += '</div>'
+                    $("#todo").append(result)
+                }
+            }
+        })
+    }
 </script>
