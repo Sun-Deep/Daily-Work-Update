@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-12">
         <div class="main-card mb-3 card">
-            <div class="card-body"><h5 class="card-title">Todos</h5>
+            <div class="card-body"><h5 class="card-title">Assigned Todo List - {{project_name}}</h5>
                 <table class="mb-0 table table-hover">
                     <thead>
                         <tr>
@@ -9,14 +9,50 @@
                             <th>Assigned To</th>
                             <th>Designation</th>
                             <th>Status</th>
-                            <th>Edit</th>
-                            <th>Delete</th>
+                            
+                            <th>Remove Assigned</th>
                         </tr>
                     </thead>
                     <tbody>
-                        
+                        {{#each todos}}
+                        <tr>
+                            <td>{{todo}}</td>
+                            <td>{{name}}</td>
+                            <td>{{designation}}</td>
+                            {{#if status 0}}
+                            <td>
+                                <a href="/admin/edit/project_todos/status/{{projects_todo_id}}/{{status}}/{{project_id}}" class="btn btn-info btn-sm p-1 my-2">incomplete</a>
+                            </td>
+                            {{else}}
+                            <td>
+                                <a href="/admin/edit/project_todos/status/{{projects_todo_id}}/{{status}}/{{project_id}}" class="btn btn-success btn-sm p-1 my-2">completed</a>
+                            </td>
+                            {{/if}}
+                            
+                            <td>
+                                <a href="/admin/remove_assigned_todo/{{assigned_todos_id}}/{{assigned_projects_id}}/{{project_id}}" class="btn btn-danger">Remove Assigned</a>
+                            </td>
+                        </tr>
+                        {{/each}}
                     </tbody>
                 </table>
+                
+            </div>
+        </div>
+
+        {{!-- todos that are not assigned --}}
+        <div class="main-card mb-3 card">
+            <div class="card-body"><h5 class="card-title">Not Assigned Todo List - {{project_name}}</h5>
+                <table class="mb-0 table table-hover">
+                    <tbody>
+                        {{#each todos_not_assigned}}
+                        <tr>
+                            <td>{{todo}}</td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+                
             </div>
         </div>
     </div>

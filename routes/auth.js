@@ -211,7 +211,78 @@ router.post('/add_project', verify_route, verify_role, (req, res) => {
             if (error){
                 throw error
             }else{
-                res.send("Saved Successfully")
+                res.redirect('/admin/')
+            }
+        })
+    }
+})
+
+// view project lists
+router.get('/project_details', verify_route, verify_role, (req, res) => {
+    con.query("SELECT * FROM projects ORDER BY STATUS DESC", (error, project_details, fields) => {
+        if(error){
+            throw error
+        }else{
+            for(let i = 0; i < Object.keys(project_details).length; i++){
+                project_details[i]['short_details'] = project_details[i]['details'].substring(0, 100) + '...'
+            }
+            res.render('project_list', {project_details: project_details})
+        }
+    })
+
+})
+
+// view details of particular project
+router.get('/project_details/:id', verify_route, verify_role, (req, res) => {
+    con.query("SELECT * FROM projects WHERE id = ?", [req.params.id], (error, project, fields) => {
+        if (error){
+            throw error
+        }else{
+            con.query("SELECT users.name, assigned_projects.designation FROM users, assigned_projects WHERE assigned_projects.project_id = ? AND assigned_projects.user_id = users.id",
+            [req.params.id], (error, assigned_users, fields) => {
+                if (error){
+                    throw error
+                }else{
+                    res.render('view_project_details', {project: project[0], assigned_users: assigned_users})
+                }
+            })
+        }
+    })
+})
+
+//edit project details of particular project
+router.get('/edit/project_details/:id', verify_route, verify_role, (req, res) => {
+    con.query("SELECT * FROM projects WHERE id = ?", [req.params.id], (error, project, fields) => {
+        if (error){
+            throw error
+        }else{
+            res.render('edit_project_details', {project: project[0]})  
+        }
+    })
+    
+})
+
+router.post('/edit/project_details', verify_route, verify_role, (req, res) => {
+    const schema = Joi.object({
+        project_name: Joi.string().required(),
+        frontend_language: Joi.string().required(),
+        backend_language: Joi.string().required(),
+        project_details: Joi.string().required(),
+        status: Joi.number().required(),
+        project_id: Joi.number().required()
+    })
+
+    const {error, value} = schema.validate(req.body, {abortEarly: false})
+    if (error){
+        throw error
+    }else{
+        con.query("UPDATE projects SET NAME = ?, frontend = ?, backend = ?, details = ?, STATUS = ? WHERE id = ?",
+        [value.project_name, value.frontend_language, value.backend_language, value.project_details, value.status, value.project_id], (error, results, fields) => {
+            if (error){
+                throw error
+            }else{
+                res.redirect('/admin/project_details/'+value.project_id)
+            
             }
         })
     }
@@ -257,7 +328,7 @@ router.post('/add_project_todo', verify_route, verify_role, (req, res) => {
                     throw err
                 })
             })
-            return res.json("Saved Successfully")
+            return res.redirect('/admin/add_project_todo')
 
         }
         
@@ -269,6 +340,14 @@ router.get('/project_todos/:id', verify_route, verify_role, (req, res) => {
     con.query("SELECT id, todo, status FROM projects_todo WHERE project_id = ?",[project_id],
     (error, todos, fields) => {
         // console.log(todos)
+        return res.json(todos)
+    })
+})
+
+router.get('/not_assigned/project_todos/:id', verify_route, verify_role, (req, res) => {
+    let project_id = req.params.id
+    con.query("SELECT projects_todo.id, projects_todo.todo, projects_todo.status FROM projects_todo WHERE projects_todo.project_id = ? AND NOT EXISTS (SELECT assigned_todos.assigned_todo FROM assigned_todos WHERE projects_todo.id = assigned_todos.assigned_todo)",
+    [project_id], (error, todos, fields) => {
         return res.json(todos)
     })
 })
@@ -321,7 +400,7 @@ router.post('/assign_programmer', verify_route, verify_role, (req, res) => {
                             throw err
                         })
                     }
-                    return res.json("Saved Successfully")
+                    res.redirect('/admin/')
                 })
             })
         }  
@@ -329,8 +408,89 @@ router.post('/assign_programmer', verify_route, verify_role, (req, res) => {
 })
 
 // view all todos
-router.get('/view_todos', verify_route, verify_role, (req, res) => {
-    res.render('view_todos')
+router.get('/view_todos/:project_id', verify_route, verify_role, (req, res) => {
+    con.query("SELECT projects_todo.project_id AS project_id, projects_todo.id AS projects_todo_id, assigned_projects.id AS assigned_projects_id, assigned_todos.id AS assigned_todos_id, projects_todo.todo, projects_todo.status, assigned_projects.designation, users.name, projects.name as project_name FROM assigned_projects JOIN assigned_todos ON  assigned_todos.assigned_projects_id = assigned_projects.id AND assigned_projects.project_id = ? JOIN projects_todo ON assigned_todos.assigned_todo = projects_todo.id JOIN users ON users.id = assigned_projects.user_id JOIN projects ON projects.id = assigned_projects.project_id ORDER BY users.name ASC", 
+    [req.params.project_id], (error, todos, fields) => {
+        if(error){
+            throw error
+        }else{
+            con.query("SELECT projects_todo.id, projects_todo.todo FROM projects_todo WHERE projects_todo.project_id = ? AND NOT EXISTS (SELECT assigned_todos.assigned_todo FROM assigned_todos WHERE projects_todo.id = assigned_todos.assigned_todo)",
+            [req.params.project_id], (error, todos_not_assigned, fields) => {
+                res.render('view_todos', {todos: todos, project_name: todos[0].project_name, todos_not_assigned: todos_not_assigned})
+            })
+        }
+    })
+})
+
+router.get("/edit/project_todos/status/:id/:status/:project_id", verify_route, verify_role, (req, res) => {
+    if (req.params.status == 0){
+        con.query("UPDATE projects_todo SET STATUS = 1 WHERE id = ?", [req.params.id], (error, results, fields) => {
+            if (error){
+                throw error
+            }else{
+                res.redirect('/admin/view_todos/'+req.params.project_id)
+            }
+        })
+    }else{
+        con.query("UPDATE projects_todo SET STATUS = 0 WHERE id = ?", [req.params.id], (error, results, fields) => {
+            if (error){
+                throw error
+            }else{
+                res.redirect('/admin/view_todos/'+req.params.project_id)
+            }
+        })
+    }
+})
+
+
+// remove assigned todos 
+router.get('/remove_assigned_todo/:assigned_todo_id/:assigned_projects_id/:project_id', verify_route, verify_role, (req, res) => {
+    let assigned_projects_id = req.params.assigned_projects_id
+    let assigned_todo_id = req.params.assigned_todo_id
+    let project_id = req.params.project_id
+    con.query("SELECT COUNT(id) AS count  FROM assigned_todos WHERE assigned_projects_id = ?",
+    [assigned_projects_id], (error, count, fields) => {
+        if (error){
+            throw error
+        }else{
+            if(count[0].count > 1){
+                con.query("DELETE FROM assigned_todos WHERE id = ?", [assigned_todo_id], (error, results, fields) => {
+                    if (error){
+                        throw error
+                    }else{
+                        res.redirect('/admin/view_todos/'+project_id)
+                    }
+                })
+            }else{
+                con.beginTransaction((err) => {
+                    if (err) throw err
+                    con.query("DELETE FROM assigned_todos WHERE id = ?", [assigned_todo_id], (error, results, fields) => {
+                        if (error){
+                            return con.rollback(() => {
+                                throw error
+                            })
+                        }
+                        con.query("DELETE FROM assigned_projects WHERE id = ?", 
+                        [assigned_projects_id], (error, results, fields) => {
+                            if (error){
+                                return con.rollback(() => {
+                                    throw error
+                                })
+                            }
+                            con.commit((err) => {
+                                if(err){
+                                    return con.rollback(() => {
+                                        throw err
+                                    })
+                                }
+                                res.redirect('/admin/view_todos/'+project_id)
+                            })
+                        })
+                    })
+                })
+            }
+        }
+    })
 })
 
 module.exports = router

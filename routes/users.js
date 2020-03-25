@@ -65,7 +65,7 @@ router.post('/main', verify_route, (req, res) => {
     }else{
         var date = new Date()
         var formattedDate = date.getFullYear() +"-"+ (date.getMonth() + 1) +"-" + date.getDate() +" "+ date.getHours() +":"+ date.getMinutes()+":"+date.getSeconds()
-        console.log(formattedDate)
+        // console.log(date)
         con.query("INSERT INTO user_details (task_done, task_to_do, work_date, user_id) VALUES (?, ?, ?, ?)",
         [value.done, value.todo, formattedDate, req.user_id], (error, results, fields) => {
             console.log(results)

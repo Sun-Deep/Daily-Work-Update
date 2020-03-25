@@ -2,7 +2,7 @@
 
     {{!-- Todo (today) --}}
     <div class="col-6" id="scroll">
-        <h5 class="mb-4">Todo List</h5>
+        <h5 class="mb-4" id="in_details">Todo List</h5>
         <hr>
         <div id="todo_container">
             <div id="todo">
@@ -55,6 +55,7 @@
                 if (data.length > 0){
                     var result = ''
                     let anchor = ''
+                    let title = 'Todo List  <a href="/admin/view_todos/'+project_id+'" class="btn btn-primary ml-3">View In Details</a>'  
                     for (let i = 0; i < data.length; i++){
                         if(data[i].status == 0){
                             anchor = '<a href="/edit/project_todos/status/'+data[i].id+'/'+ data[i].status+'" class="btn btn-outline-info btn-sm ml-3">incomplete</a>'
@@ -64,6 +65,7 @@
                         result += '<p>'+data[i].todo +' '+ anchor+'</p>'
                     }
                     result += '</div>'
+                    $("#in_details").html(title)
                     $("#todo").append(result)
                 }
             }

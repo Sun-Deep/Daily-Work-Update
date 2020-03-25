@@ -1,0 +1,52 @@
+{{!-- project details--}}
+<div class="main-card mb-3 card">
+    <div class="card-body"><h5 class="card-title">Project Details</h5>
+        <table class="mb-0 table table-hover">
+            <tbody>
+                <thead>
+                    <tr>
+                        <th>Project Name</th>
+                        <th>Front-End</th>
+                        <th>Back-End</th>
+                        <th>Details</th>
+                        <th></th>
+                        <th>Edit</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                {{#each project_details}}
+                    <tr>
+                        <td>{{name}}</td>
+                        <td>{{frontend}}</td>
+                        <td>{{backend}}</td>
+                        <td>
+                            
+                                {{short_details}}
+                            
+                        </td>
+                        <td>
+                            <a href="/admin/project_details/{{id}}" class="btn btn-info">Details</a>
+                        </td>
+                        <td>
+                            <a href="/admin/edit/project_details/{{id}}" class="btn btn-circle btn-warning">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </td>
+                        {{#if status 1}}
+                            <td>
+                                <a href="" class="btn btn-success ">ongoing</a>
+                            </td>
+                            
+                        {{else}}
+                            <td>
+                                <a href="" class="btn btn-danger ">stopped</a>
+                            </td>
+                        {{/if}}
+                    </tr>
+                   
+                {{/each}}
+            </tbody>
+        </table> 
+    </div>
+</div>
+

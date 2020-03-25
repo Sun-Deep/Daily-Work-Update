@@ -57,22 +57,27 @@
        </div>
 
        <div class="row">
-           <div class="col-3 left-main">
-               <h5>To Do List</h5>
-               <hr style="background-color: white;">
-               {{!-- {{#each results}} --}}
-                    <p >{{todo.task_to_do}}</p>
-                    <span style="color: silver;">({{todo.work_date}})</span> 
-                {{!-- {{/each}} --}}
-                <br>
-                <hr style="background-color: white;">
-                <br>
-                <h5>Task Done</h5>
-                {{#each done}}
-                        <p class="mt-4">{{task_done}}</p>
-                        <span style="color: silver;">({{work_date}})</span> 
-                {{/each}}
-           </div>
+           {{!-- <div id=""> --}}
+               <div class="col-3 left-main">
+                   <div id="main-scroll">
+                       <h5>To Do List</h5>
+                    <hr style="background-color: white;">
+                    {{!-- {{#each results}} --}}
+                        <p style="line-height: 20px;">{{todo.task_to_do}}</p>
+                        <span style="color: silver;">({{todo.work_date}})</span> 
+                    {{!-- {{/each}} --}}
+                    <br>
+                    <hr style="background-color: white;">
+                    <br>
+                    <h5>Task Done</h5>
+                    {{#each done}}
+                            <p class="mt-4" style="line-height: 20px;">{{task_done}}</p>
+                            <span style="color: silver;">({{work_date}})</span> 
+                    {{/each}}
+                   </div>
+                </div>
+           {{!-- </div> --}}
+           
            <div class="col-5">
                    <form action="/main" method="POST"> 
                         <div class="form-group col-12">

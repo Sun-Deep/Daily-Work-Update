@@ -71,7 +71,7 @@
         $("#todo").append('<select name="project_todo" id="project_todo" class="form-control" multiple required>')
         $.ajax({
             type: 'GET',
-            url: '/admin/project_todos/' + project_id,
+            url: '/admin/not_assigned/project_todos/' + project_id,
             success: (data) => {
                 if (data.length > 0){
                     var result = ''
