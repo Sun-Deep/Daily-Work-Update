@@ -116,7 +116,7 @@
                             {{#each ../project_details}}
                                 {{#if ../project_name name}}
                                     
-                                    <p class="py-1">{{todo}} 
+                                    <p class="py-1" style="line-height: 20px;">{{todo}} 
                                         <span>
                                             <a href="/edit/project_todos/status/{{id}}/{{status}}" class="ml-3 btn {{#if status 0}}btn-outline-light{{else}}btn-success{{/if}} btn-sm btn-submit">{{#if status 0}}complete{{else}}completed{{/if}}</a>
                                         </span>

@@ -27,6 +27,11 @@
                         <option value="Frontend Developer - Senior">Frontend Developer -Senior</option>
                         <option value="Frontend Developer - Junior">Frontend Developer - Junior</option>
                         <option value="Quality Assurance">Quality Assurance</option>
+                        <option value="Support Engineer">Support Engineer</option>
+                        <option value="HR Manager">HR Manager</option>
+                        <option value="Senior Software Manager">Senior Software Manager</option>
+                        <option value="Content Writer">Content Writer</option>
+                        <option value="Business Development Manager">Business Development Manager</option>
 
                     </select>
                 </div>
@@ -74,7 +79,7 @@
         $("#todo").append('<select name="project_todo" id="project_todo" class="form-control" multiple required>')
         $.ajax({
             type: 'GET',
-            url: '/admin/not_assigned/project_todos/' + project_id,
+            url: '/admin/project_todos/' + project_id,
             success: (data) => {
                 if (data.length > 0){
                     var result = ''

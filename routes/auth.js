@@ -356,12 +356,14 @@ router.post('/add_project_todo', verify_route, verify_role, (req, res) => {
                 }
             }
             con.commit((err) => {
-                return con.rollback(() => {
-                    throw err
-                })
+                if(err){
+                    return con.rollback(() => {
+                        throw err
+                    })
+                }
+                return res.redirect('/admin/add_project_todo')
             })
-            return res.redirect('/admin/add_project_todo')
-
+           
         }
         
     })
@@ -418,10 +420,21 @@ router.post('/assign_programmer', verify_route, verify_role, (req, res) => {
                 }
                 // console.log(results)
                 let project_todo = req.body.project_todo
-                // console.log(project_todo)
-                for(let i = 0; i < project_todo.length; i++){
+                // console.log(typeof(project_todo))
+                if (typeof(project_todo) == "object"){
+                    for(let i = 0; i < project_todo.length; i++){
+                        con.query("INSERT INTO assigned_todos (assigned_projects_id, assigned_todo) VALUES (?, ?)",
+                        [results.insertId, project_todo[i]], (error, result1, fields) => {
+                            if (error){
+                                return con.rollback(() => {
+                                    throw error
+                                })
+                            }
+                        })
+                    }
+                }else{
                     con.query("INSERT INTO assigned_todos (assigned_projects_id, assigned_todo) VALUES (?, ?)",
-                    [results.insertId, project_todo[i]], (error, result1, fields) => {
+                    [results.insertId, project_todo], (error, result1, fields) => {
                         if (error){
                             return con.rollback(() => {
                                 throw error
@@ -449,10 +462,19 @@ router.get('/view_todos/:project_id', verify_route, verify_role, (req, res) => {
         if(error){
             throw error
         }else{
-            con.query("SELECT projects_todo.id, projects_todo.todo FROM projects_todo WHERE projects_todo.project_id = ? AND NOT EXISTS (SELECT assigned_todos.assigned_todo FROM assigned_todos WHERE projects_todo.id = assigned_todos.assigned_todo)",
-            [req.params.project_id], (error, todos_not_assigned, fields) => {
+            console.log(todos)
+            if(Object.keys(todos).length == 0){
+                con.query("SELECT projects_todo.id, projects_todo.todo FROM projects_todo WHERE projects_todo.project_id = ? AND NOT EXISTS (SELECT assigned_todos.assigned_todo FROM assigned_todos WHERE projects_todo.id = assigned_todos.assigned_todo)",
+                [req.params.project_id], (error, todos_not_assigned, fields) => {
+                res.render('view_todos', {todos_not_assigned: todos_not_assigned})
+                })
+            }else{
+                con.query("SELECT projects_todo.id, projects_todo.todo FROM projects_todo WHERE projects_todo.project_id = ? AND NOT EXISTS (SELECT assigned_todos.assigned_todo FROM assigned_todos WHERE projects_todo.id = assigned_todos.assigned_todo)",
+                [req.params.project_id], (error, todos_not_assigned, fields) => {
                 res.render('view_todos', {todos: todos, project_name: todos[0].project_name, todos_not_assigned: todos_not_assigned})
-            })
+                })
+            }
+            
         }
     })
 })
