@@ -332,9 +332,8 @@ router.get('/add_project_todo', verify_route, verify_role, (req, res) => {
 
 // add project todos
 router.post('/add_project_todo', verify_route, verify_role, (req, res) => {
-    console.log(req.body)
+    // console.log(req.body)
     let project_id = req.body.project
-    console.log(req.body["project_todo" + 1])
     con.beginTransaction((err) => {
         if (err){
             throw err
@@ -344,15 +343,20 @@ router.post('/add_project_todo', verify_route, verify_role, (req, res) => {
                     continue
                 }else{
                     let todo = req.body["project_todo" + i]
-                    console.log(todo)
-                    con.query("INSERT INTO projects_todo (todo, project_id) VALUES (?, ?)",
-                    [todo, project_id], (error, results, fields) => {
-                        if(error){
-                            return con.rollback(() => {
-                                throw error
-                            })
-                        }
-                    })
+                    if(todo.length == 0){
+                        continue
+                    }else{
+                        // console.log(todo)
+                        con.query("INSERT INTO projects_todo (todo, project_id) VALUES (?, ?)",
+                        [todo, project_id], (error, results, fields) => {
+                                if(error){
+                                    return con.rollback(() => {
+                                        throw error
+                                    })
+                                }
+                        })
+                    }
+                    
                 }
             }
             con.commit((err) => {
