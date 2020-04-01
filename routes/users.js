@@ -12,7 +12,7 @@ router.get('/login', (req, res) => {
 
 
 router.get('/', verify_route, (req, res) => {
-    con.query("SELECT users.name, user_details.id, user_details.task_done, user_details.task_to_do, DATE_FORMAT(user_details.work_date, '%b %d, %Y %a %k:%i:%s') AS work_date FROM user_details, users WHERE user_details.user_id = users.id AND user_id = ? ORDER BY work_date DESC LIMIT 5",
+    con.query("SELECT users.name, user_details.id, user_details.task_done, user_details.task_to_do, DATE_FORMAT(user_details.work_date, '%b %d, %Y %a %k:%i:%s') AS work_date FROM user_details, users WHERE user_details.user_id = users.id AND user_id = ? ORDER BY id DESC LIMIT 5",
      [req.user_id], (error, results, fields) => {
         if (error){
             throw error

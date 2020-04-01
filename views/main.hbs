@@ -34,27 +34,49 @@
         .btn-submit{
             color: white;
         }
+        .btn-details{
+            color: black;
+        }
         .btn-submit:hover{
-            color: #404040;
+            color: white;
         }
         .left-main, .right-main{
             color: white;
         }
 
-        #main-scroll{
+        #main-scroll, #right-scroll{
             overflow-y: scroll;
             padding: 10px;
         }
-        
+        .today_task{
+            min-width: 27rem;
+        }
+        .search-wrapper.active{
+            width: 291px;
+            border: 1px solid white;
+            border-radius: 27px;
+        }
+        .search-icon{
+            background-color: white !important;
+        }
+        .search-input{
+            color: white;
+        }
+        .search-wrapper .input-holder .search-icon span::before {
+            background: black;
+        }
+        .search-wrapper .input-holder .search-icon span::after {
+            border: 2px solid black;
+        }
     </style>
 </head>
 <body>
    <div class="container-fluid mt-3">
-       <div class="row">
+       {{!-- <div class="row">
            <div class="offset-3 col-5">
                <p id="date"></p>
            </div>
-       </div>
+       </div> --}}
 
        <div class="row">
            {{!-- <div id=""> --}}
@@ -79,21 +101,47 @@
            {{!-- </div> --}}
            
            <div class="col-5">
-                   <form action="/main" method="POST"> 
-                        <div class="form-group col-12">
-                            <textarea name="done" rows="10"  class="form-control autosize-input did" placeholder="What You Did ?"></textarea>
+               <div class="row">
+                   <div class="col-4">
+                       {{!--dropdown btn --}}
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-light btn-submit" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span style="color: white; font-size: 16px">Update Info</span>
+                            </button>
+                        <div class="dropdown-menu today_task form-group" style="padding: 10px;" style="">
+                            <form action="/main" method="POST"> 
+                                    <div class="form-group col-12">
+                                        <textarea name="done" rows="5"  class="form-control autosize-input did" placeholder="What You Did ?"></textarea>
+                                    </div>
+                                    <div class="form-group col-12 mt-4">
+                                        <textarea name="todo" rows="5" class="form-control autosize-input did" placeholder="Tomorrow Plan ?"></textarea>
+                                    </div>
+                                    <div class="form-group col-12 mt-4">
+                                        <center>
+                                            <button type="submit" class="btn-wide mr-2 btn btn-outline-dark btn-lg btn-details">Submit Details</button>
+                                        </center>
+                                    </div>
+                                </form>
+                            </div> 
                         </div>
-                        <div class="form-group col-12 mt-4">
-                            <textarea name="todo" rows="10" class="form-control autosize-input did" placeholder="Tomorrow Plan ?"></textarea>
+                   </div>
+                   <div class="offset-1 col-7">
+                       <div class="search-wrapper active">
+                            <div class="input-holder">
+                                <input type="text" class="search-input" placeholder="Type to search">
+                                <button class="search-icon"><span></span></button>
+                            </div>
                         </div>
-                        <div class="form-group col-12 mt-4">
-                            <center>
-                                <button type="submit" class="btn-wide mb-2 mr-2 btn btn-outline-light btn-lg btn-submit">Submit Details</button>
-                            </center>
-                        </div>
-                    </form>
+                   </div>
                </div>
-               <div class="col-4 right-main" style="margin-top: -30px;">
+               
+               <div class="row mt-5">
+                  
+               </div>
+               
+               
+            </div>
+               <div class="col-4 right-main">
                     <div class="btn-group">
                         <button type="button" class="btn btn-danger dropdown-toggle" style="background: #404040; border:none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <img src="/images/dummy.png" alt="" class="img-fluid" width="50px" style="border-radius: 50%;">
@@ -107,7 +155,7 @@
                             </form>
                         </div>
                     </div>
-                    <div id="main-scroll">
+                    <div id="right-scroll">
                         <h5 class="mt-4">Assigned Project List</h5>
                         {{#each projects_name}}
                         <hr style="background-color: white;">
@@ -138,8 +186,10 @@
         document.getElementById("date").innerHTML = date
     }, 1000)
     
-    let deviceHeight = window.innerHeight - 100
-    document.getElementById("main-scroll").style.height = deviceHeight + "px";
+    let deviceHeight1 = window.innerHeight - 30
+    let deviceHeight2 = window.innerHeight - 100
+    document.getElementById("main-scroll").style.height = deviceHeight1 + "px";
+    document.getElementById("right-scroll").style.height = deviceHeight2 + "px";
 </script>
 </body>
 </html>

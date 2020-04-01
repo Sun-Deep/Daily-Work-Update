@@ -1,6 +1,6 @@
 <div class="col-md-10 mx-auto">
     <div class="main-card mb-3 card">
-        <div class="card-body"><h5 class="card-title">Add Project Todo</h5>
+        <div class="card-body"><h5 class="card-title">Add Project Issue</h5>
             <form method="POST" action="/admin/add_project_todo">
                 
                 <div class="position-relative form-group">
@@ -15,11 +15,15 @@
                 </div>
                 
                 <div class="position-relative form-group" id="projectTodo">
-                    <label for="project_todo" class="">Project Todo</label>
-                    <button onclick="addnew_todo()" type="button" class="btn btn-primary ml-5 my-2" style="float: right;"> + Add New</button>
-                    <input type="text" name="project_todo1" id="project_todo1" class="form-control mb-3" required>
+                    <label for="project_todo" class="">Project Issue</label>
+                    {{!-- <button onclick="addnew_todo()" type="button" class="btn btn-info ml-5 my-2" style="float: right;"> + Add New</button> --}}
+                    <input type="text" name="project_todo1" id="project_todo1" class="form-control mb-3" required placeholder="Issue title here..">
+                    <textarea name="project_description1" id="project_description1" cols="30" class="form-control mb-3" rows="5" placeholder="Issue description here.." required></textarea>
+                    <input type="file" placeholder="File attachement here.." class="form-control-file mb-5" name="project_file1" id="project_file1" required accept="image/*, .pdf">
                 </div>
-                <button class="mt-1 btn btn-primary" type="submit">Add</button>
+                <button onclick="addnew_todo()" type="button" class="btn btn-info my-2" style="float: left;"> + Add New</button>
+                <button class="mt-1 btn btn-primary" type="submit" style="float: right;">Save Issues</button>
+                
             </form>
         </div>
     </div>
@@ -30,7 +34,12 @@
     let todoID = 2
     function addnew_todo(){
         let name = "project_todo" + todoID
-        var result = '<input type="text" name="'+name+'" id="'+name+'" class="form-control mb-3">'
+        let description = "project_description" + todoID
+        let file = "project_file" + todoID
+        var result = '<hr>'
+        result += '<input type="text" name="'+name+'" id="'+name+'" class="form-control mb-3" placeholder="Issue title here..">'
+        result += '<textarea name="'+description+'" id="'+description+'" cols="30" class="form-control mb-3" rows="5" placeholder="Issue description here.."></textarea>'
+        result += '<input type="file"  name="'+file+'" id="'+file+'" placeholder="File attachement here.." class="form-control-file mb-3" accept="image/*, .pdf">'
         $("#projectTodo").append(result)
         todoID += 1
     }

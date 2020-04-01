@@ -556,4 +556,37 @@ router.get('/remove_assigned_todo/:assigned_todo_id/:assigned_projects_id/:proje
     })
 })
 
+
+// user todos
+router.get('/view_user_todos/:user_id', verify_route, (req, res) => {
+    let user_id = req.params.user_id
+    // con.query("SELECT users.name, user_details.user_id AS user_id, user_details.task_done, user_details.task_to_do, DATE_FORMAT(user_details.work_date, '%b %d, %Y %a %k:%i:%s') AS work_date FROM user_details, users WHERE user_details.user_id = users.id AND user_id = 3 ORDER BY work_date DESC LIMIT 1",
+    // [user_id], (error, todo_done, fields) =>{
+    //     if (error){
+    //         throw error
+    //     }else{
+            con.query("SELECT projects_todo.id, projects_todo.todo, projects.name, projects_todo.status FROM projects_todo, projects WHERE projects.id = projects_todo.project_id AND projects_todo.id IN (SELECT assigned_todos.assigned_todo FROM assigned_projects, assigned_todos WHERE assigned_projects.id = assigned_todos.assigned_projects_id AND assigned_projects.user_id = ?) ORDER BY projects.name ASC",
+            [user_id], (error, todos, fields) => {
+                if (error){
+                    throw error
+                }else{
+                    return res.json(todos)
+                }
+            })
+    //     }
+    // })
+    
+})
+
+router.get('/view_user_todo_done/:user_id', (req, res) => {
+    let user_id = req.params.user_id
+    con.query("SELECT users.name, user_details.user_id AS user_id, user_details.task_done, user_details.task_to_do, DATE_FORMAT(user_details.work_date, '%b %d, %Y %a %k:%i:%s') AS work_date FROM user_details, users WHERE user_details.user_id = users.id AND user_id = ? ORDER BY work_date DESC LIMIT 1",
+    [user_id], (error, todo_done, fields) => {
+        if (error){
+            throw error
+        }else{
+            return res.json(todo_done)
+        }
+    })
+})
 module.exports = router
