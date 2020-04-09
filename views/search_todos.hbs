@@ -1,0 +1,165 @@
+<div class="col-10 mx-auto">
+    <div class="search-wrapper active w-100">
+        <form action="/admin/view_todos_details/" method="POST">
+            <div class="input-holder"  style="width: 100%;">
+                <input name="id" type="text" class="search-input" placeholder="Type to search">
+                <button type="submit" class="search-icon"><span></span></button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="col-10 mx-auto mt-4">
+    <div class="position-relative form-group">
+        <label for="project" class="">Select Project</label>
+        <select name="project" id="project" class="form-control" onchange="load_todos()" required>
+            <option value="">-- Select --</option>
+            {{!-- add project list --}}
+            {{#each projects}}
+                <option value="{{id}}">{{name}}</option>
+            {{/each}}
+        </select>
+    </div>
+</div>
+
+{{!--  filter issue by some selection --}}
+<div class="col-10 mx-auto mt-4">
+    <div class="main-card mb-3 card">
+        <div class="card-body">
+            <h5 class="card-title">Filter Issues By</h5>
+            <div class="position-relative form-group">
+                <div>
+                    <div class="custom-checkbox custom-control custom-control-inline">
+                        <input type="checkbox" id="all" name="all" class="custom-control-input" value="all" onclick="check_checkbox()" checked>
+                        <label class="custom-control-label" for="all">
+                            All
+                        </label>
+                    </div>
+                    <div class="custom-checkbox custom-control custom-control-inline">
+                        <input type="checkbox" id="open" name="open" class="custom-control-input" value="open" onclick="check_checkbox()">
+                        <label class="custom-control-label" for="open">
+                            Open
+                        </label>
+                    </div>
+                    <div class="custom-checkbox custom-control custom-control-inline">
+                        <input type="checkbox" id="resolved" name="resolved" class="custom-control-input" value="resolved" onclick="check_checkbox()">
+                        <label class="custom-control-label" for="resolved">
+                            Resolved
+                        </label>
+                    </div>
+                    <div class="custom-checkbox custom-control custom-control-inline">
+                        <input type="checkbox" id="closed" name="closed" class="custom-control-input" value="closed" onclick="check_checkbox()">
+                        <label class="custom-control-label" for="closed">
+                            Closed
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <h5 class="card-title">Sort Issues By</h5>
+            <div class="position-relative form-group">
+                <div>
+                    <div class="custom-checkbox custom-control custom-control-inline">
+                        <input type="checkbox" id="date" name="date" class="custom-control-input" value="date" onclick="check_checkbox()">
+                        <label class="custom-control-label" for="date">
+                            Latest Issue
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{{!-- filter issue by project --}}
+<div class="col-10 mx-auto mt-4">
+    <div id="todo">
+    </div>
+</div>
+
+
+
+<script>
+    let all = true
+    let open = false
+    let resolved = false
+    let closed = false
+    let date = false
+
+    function load_todos(){
+        let project_id = $("#project option:selected").val()
+        $("#project_todo").remove()
+        $("#todo").append('<table class="mb-0 table table-hover" id="project_todo" style="background-color:white;">')
+        $.ajax({
+            type: 'GET',
+            url: '/admin/project_todos/' + project_id,
+            success: (response) => {
+                let data = ''
+                if (response.length > 0){
+                    data = filter_data(response)
+                    }
+                    
+                    if(date){
+                        data.sort((a, b) => {
+                            return (b.id - a.id)
+                        })
+                    }else{
+                        data.sort((a, b) => {
+                            return (a.id - b.id)
+                        })
+                    }
+                    
+                    var button = ''
+                    var result = ''
+                    for(let i = 0; i < data.length; i++){
+                        if (data[i].status == 0){
+                            button = '<button class="btn btn-sm btn-outline-info pull-right">open</button>'
+                        }else if (data[i].status == 1){
+                            button = '<button class="btn btn-sm btn-outline-danger pull-right">closed</button>'
+                        }else{
+                            button = '<button class="btn btn-sm btn-outline-success pull-right">resolved</button>'
+                        }
+                        result += '<tr><td><a href="/admin/view_todos_details/'+data[i].id+'" style="text-decoration:none;color:black;"><strong>#'+ data[i].id+'</strong> &nbsp;&nbsp;' + data[i].todo +' '+ button +'</a></td></tr>'  
+                    }
+                    result += '</table>'
+                    $("#project_todo").append(result)
+                }
+        })
+    }
+
+
+    function check_checkbox(){
+        all = document.getElementById("all").checked ? document.getElementById("all").value : false
+        open = document.getElementById("open").checked ? document.getElementById("open").value : false
+        resolved = document.getElementById("resolved").checked ? document.getElementById("resolved").value : false
+        closed = document.getElementById("closed").checked ? document.getElementById("closed").value : false
+        date = document.getElementById("date").checked ? document.getElementById("date").value : false
+        load_todos()
+    }
+
+
+    // filter data
+    function filter_data(response){
+        let data =  response.filter((e) => {
+            if(all){
+                return e
+            } else if(open && resolved && closed){
+                return e
+            }else if (resolved && open){
+                return (e.status == 2 || e.status == 0)
+            }else if(open && closed){
+                return (e.status == 1 || e.status == 0)
+            }else if (resolved && closed){
+                return (e.status == 1 || e.status == 2)
+            }else if(open){
+                return e.status == 0
+            }else if(closed){
+                return e.status == 1
+            }else if(resolved){
+                return e.status == 2
+            }
+        })
+        return data
+    }
+</script>

@@ -5,30 +5,41 @@
                 <table class="mb-0 table table-hover">
                     <thead>
                         <tr>
-                            <th>Todos</th>
+                            <th>#</th>
+                            <th>Issues</th>
                             <th>Assigned To</th>
                             <th>Designation</th>
+                            <th>Details</th>
                             <th>Status</th>
-                            
                             <th>Remove Assigned</th>
                         </tr>
                     </thead>
                     <tbody>
                         {{#each todos}}
                         <tr>
+                            <td>{{id}}</td>
                             <td>{{todo}}</td>
                             <td>{{name}}</td>
                             <td>{{designation}}</td>
+                            <td>
+                                <a href="/admin/view_todos_details/{{projects_todo_id}}" class="btn btn-primary btn-sm p-1 my-2">View Details</a>
+                            </td>
+                            </td>
                             {{#if status 0}}
                             <td>
-                                <a href="/admin/edit/project_todos/status/{{projects_todo_id}}/{{status}}/{{project_id}}" class="btn btn-info btn-sm p-1 my-2">incomplete</a>
-                            </td>
-                            {{else}}
-                            <td>
-                                <a href="/admin/edit/project_todos/status/{{projects_todo_id}}/{{status}}/{{project_id}}" class="btn btn-success btn-sm p-1 my-2">completed</a>
+                                <button class="btn btn-info btn-sm p-1 my-2">open</button>
                             </td>
                             {{/if}}
-                            
+                            {{#if status 1}}
+                            <td>
+                                <button class="btn btn-success btn-sm p-1 my-2">closed</button>
+                            </td>
+                            {{/if}}
+                            {{#if status 2}}
+                            <td>
+                                <button class="btn btn-success btn-sm p-1 my-2">resloved</button>
+                            </td>
+                            {{/if}}
                             <td>
                                 <a href="/admin/remove_assigned_todo/{{assigned_todos_id}}/{{assigned_projects_id}}/{{project_id}}" class="btn btn-danger">Remove Assigned</a>
                             </td>

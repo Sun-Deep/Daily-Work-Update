@@ -33,11 +33,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //import routes
 
-const usersRoute = require('./routes/users')
-app.use('/', usersRoute)
+
 
 const authRoute = require('./routes/auth')
 app.use('/admin/', authRoute)
+
+const usersRoute = require('./routes/users')
+app.use('/', usersRoute)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

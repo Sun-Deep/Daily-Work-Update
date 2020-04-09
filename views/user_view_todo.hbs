@@ -1,0 +1,86 @@
+
+
+<div class="col-md-10 mx-auto mt-3">
+    <div class="main-card mb-3 card" style="background-color:transparent; color: white;">
+         <div class="row p-3" style="font-size: 16px;">
+        
+                <div class="col-2">
+                    <p class="h5">Issue #: <strong>{{todo_info.id}}</strong></p>
+                    {{#if todo_info.status 0}}
+                        <button class="btn btn-sm btn-primary">open</button>
+                    {{/if}}
+                    {{#if todo_info.status 1}}
+                        <button class="btn btn-sm btn-danger">closed</button>
+                    {{/if}}
+                    {{#if todo_info.status 2}}
+                        <button class="btn btn-sm btn-success">resolved</button>
+                    {{/if}}
+                </div>
+                <div class="col-7">
+                    <p>Assigned To: {{#each user_list}} {{name}} {{/each}}</p>
+                </div>
+                <div class="col-3">
+                    <span class="btn btn-info">Add</span>
+                    <span class="btn btn-warning text-white">Change Owner</span>
+                </div>
+                <div class="col-12">
+                    <hr style="background-color: white;">
+                </div>
+                <div class="col-12 mt-4">
+                    <p><strong>Issue title: </strong>{{todo_info.todo}}</p>
+                </div>
+                <div class="col-12 mt-3">
+                    <p><strong>Description: </strong>{{todo_info.description}}</p>
+                </div>
+                <div class="col-12 mt-4">
+                    <p><strong>File: </strong><a href="/images/todo/{{todo_info.file}}" target="_blank">{{todo_info.file}}</a></p>
+                    
+                    <small>Issue Created By: {{todo_info.name}}</small><br>
+                    <small>Created At: {{todo_info.date_time}}</small>
+                </div>
+                {{#each comments}}
+                    <div class="mt-3 mx-2 p-3 w-100" style="background-color: rgba(175, 175, 175, 0.726); border-radius: 8px;">
+                        <div class="row">
+                            <div class="col-9">
+                                <p>{{comment}}</p>
+                            </div>
+                            <div class="col-3">
+                                <small>Comment By: {{name}}</small>
+                                <br>
+                                <small>Date: {{date_time}}</small>
+                            </div>
+                            <div class="col-12">
+                                <p><strong>File: </strong><a href="/images/todo/{{file}}">{{file}}</a></p>
+                            </div>
+                        </div>
+                    </div>
+                {{/each}}
+
+                <div class="comment m-3 p-3">
+                    <div class="row">
+                        <div class="col-12">
+                            <form action="/admin/todo_reply" method="POST" enctype="multipart/form-data">
+                                <div class="position-relative form-group">
+                                <textarea name="comment" id="comment" cols="150" class="form-control mb-3" rows="5" placeholder="Comment here.." required></textarea>
+                                <input type="file" placeholder="File attachement here.." class="form-control-file mb-3" name="issue_file" id="issue_file" accept="image/*, .pdf">
+                            </div>
+                            <div class="position-relative form-group">
+                                <label for="status">Issue Status: </label>
+                               <select name="status" id="status" class="form-control">
+                                   <option value="">-- Select --</option>
+                                   <option value="0">Open</option>
+                                   <option value="2">Resolved</option>
+                                   {{#if todo_info.user_id todo_info.logged_userid}}
+                                   <option value="1">Closed</option>
+                                   {{/if}}
+                               </select>
+                            </div>
+                                <input type="hidden" name="todo_id" value="{{todo_info.id}}">
+                                <button type="submit" class="btn btn-primary btn-lg">Comment</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>

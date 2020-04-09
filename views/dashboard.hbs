@@ -113,7 +113,7 @@
                                 }else{
                                     button = '<button class="btn btn-success btn-sm ml-3">completed</button>'
                                 }
-                                result += '<p>'+todos[i].todo+' ('+todos[i].name+') '+ button +'</p>'
+                                result += '<a href="/admin/view_todos_details/'+todos[i].id+'">'+todos[i].todo+' ('+todos[i].name+') </a>'+ button +'<br/><br/>'
                             }
                             result += '</div>'
                             $("#in_details").html(title)

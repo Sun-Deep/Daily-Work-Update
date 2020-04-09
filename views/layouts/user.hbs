@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link href="/admin-main.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/stylesheets/toastr.min.css">
+    <script type="text/javascript" src="/javascripts/jquery.min.js"></script>
+    <script type="text/javascript" src="/javascripts/main.js"></script>
+    <script type="text/javascript" src="/javascripts/toastr.min.js"></script>
+
+    <style>
+        
+        body{
+            background-color: #404040;
+            color: black;
+            font-family: cursive;
+            line-height: 12px;
+            margin: 0;
+            overflow-x: hidden;
+        }
+        .did{
+            color: gray;
+        }
+        .did:focus{
+            color: solid black;
+            box-shadow: 9px 3px 11px 11px rgba(153, 153, 153, 0.3);
+            border-radius: 10px;
+        }
+        #date{
+            color: white;
+            font-size: larger;
+            text-align: center;
+        }
+        .btn-submit{
+            color: white;
+        }
+        .btn-details{
+            color: black;
+        }
+        .btn-submit:hover{
+            color: white;
+        }
+        .left-main, .right-main{
+            color: white;
+        }
+
+        #main-scroll, #right-scroll{
+            overflow-y: scroll;
+            padding: 10px;
+        }
+        .today_task{
+            min-width: 27rem;
+        }
+        .search-wrapper .input-holder .search-icon span::before {
+            background: black;
+        }
+        .search-wrapper .input-holder .search-icon span::after {
+            border: 2px solid black;
+        }
+        .nav-item{
+            margin: 0 15px;
+            font-size: 16px;
+        }
+        .table th, .table td {
+            padding: 15px 20px;
+        }
+       
+    </style>
+    
+    
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/">Daily Work Update</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      
+      <li class="nav-item">
+        <a class="nav-link" href="/search_todos">Search Project Issues</a>
+      </li>
+      
+    
+    </ul>
+    <div class="btn-group">
+        <button type="button" class="btn dropdown-toggle" style="border:none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <img src="/images/dummy.png" alt="" class="img-fluid" width="30px" style="border-radius: 50%;">
+            <span style="color: white; font-size: 20px">{{results.name}}</span>
+        </button>
+        <div class="dropdown-menu form-group" style="padding: 10px;">
+            <form action="/change_password" method="POST">
+            <label for="password">Change Password</label>
+                <input type="password" class="form-control" name="password" id="passowrd" minlength="5">
+                <button type="submit" class="btn-wide mb-2 mr-2 btn btn-lg btn-submit mt-2" style="background-color: cornflowerblue; color: white;">Change</button>
+            </form>
+        </div>
+    </div>
+    <form class="form-inline my-2 my-lg-0" method="POST" action="/view_todos_details">
+        <div class="search-wrapper active">
+            <div class="input-holder">
+                <input type="text" name="id" class="search-input" placeholder="Type to search">
+                <button class="search-icon" type="submit"><span></span></button>
+            </div>
+        </div>
+    </form>
+           
+  </div>
+</nav>
+
+
+<div class="conatiner-fluid">
+    <div class="row">
+        {{{body}}}
+    </div>
+</div>
+</body>
+</html>
+

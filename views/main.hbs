@@ -1,196 +1,74 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-    <link href="/admin-main.css" rel="stylesheet">
-    
-    <link rel="stylesheet" href="/stylesheets/toastr.min.css">
-    <script type="text/javascript" src="/javascripts/jquery.min.js"></script>
-    <script type="text/javascript" src="/javascripts/main.js"></script>
-    <script type="text/javascript" src="/javascripts/toastr.min.js"></script>
 
-    <style>
-        body{
-            background-color: #404040;
-            color: black;
-            font-family: cursive;
-            line-height: 12px;
-        }
-        .did{
-            color: gray;
-        }
-        .did:focus{
-            color: solid black;
-            box-shadow: 9px 3px 11px 11px rgba(153, 153, 153, 0.3);
-            border-radius: 10px;
-        }
-        #date{
-            color: white;
-            font-size: larger;
-            text-align: center;
-        }
-        .btn-submit{
-            color: white;
-        }
-        .btn-details{
-            color: black;
-        }
-        .btn-submit:hover{
-            color: white;
-        }
-        .left-main, .right-main{
-            color: white;
-        }
-
-        #main-scroll, #right-scroll{
-            overflow-y: scroll;
-            padding: 10px;
-        }
-        .today_task{
-            min-width: 27rem;
-        }
-        .search-wrapper.active{
-            width: 291px;
-            border: 1px solid white;
-            border-radius: 27px;
-        }
-        .search-icon{
-            background-color: white !important;
-        }
-        .search-input{
-            color: white;
-        }
-        .search-wrapper .input-holder .search-icon span::before {
-            background: black;
-        }
-        .search-wrapper .input-holder .search-icon span::after {
-            border: 2px solid black;
-        }
-    </style>
-</head>
-<body>
-   <div class="container-fluid mt-3">
-       {{!-- <div class="row">
-           <div class="offset-3 col-5">
-               <p id="date"></p>
-           </div>
-       </div> --}}
-
-       <div class="row">
-           {{!-- <div id=""> --}}
-               <div class="col-3 left-main">
-                   <div id="main-scroll">
-                       <h5>To Do List</h5>
-                    <hr style="background-color: white;">
-                    {{!-- {{#each results}} --}}
-                        <p style="line-height: 20px;">{{todo.task_to_do}}</p>
-                        <span style="color: silver;">({{todo.work_date}})</span> 
-                    {{!-- {{/each}} --}}
-                    <br>
-                    <hr style="background-color: white;">
-                    <br>
-                    <h5>Task Done</h5>
-                    {{#each done}}
-                            <p class="mt-4" style="line-height: 20px;">{{task_done}}</p>
-                            <span style="color: silver;">({{work_date}})</span> 
-                    {{/each}}
-                   </div>
-                </div>
-           {{!-- </div> --}}
+<div class="col-md-3 left-main">
+    <div id="main-scroll">
+        <h5>To Do List</h5>
+    <hr style="background-color: white;">
+        <p style="line-height: 20px;">{{todo.task_to_do}}</p>
+        <span style="color: silver;">({{todo.work_date}})</span> 
+    <br>
+    <hr style="background-color: white;">
+    <br>
+    <h5>Task Done</h5>
+    {{#each done}}
+        <p class="mt-4" style="line-height: 20px;">{{task_done}}</p>
+        <span style="color: silver;">({{work_date}})</span> 
+    {{/each}}
+    </div>
+</div>
            
-           <div class="col-5">
-               <div class="row">
-                   <div class="col-4">
-                       {{!--dropdown btn --}}
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-outline-light btn-submit" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span style="color: white; font-size: 16px">Update Info</span>
-                            </button>
-                        <div class="dropdown-menu today_task form-group" style="padding: 10px;" style="">
-                            <form action="/main" method="POST"> 
-                                    <div class="form-group col-12">
-                                        <textarea name="done" rows="5"  class="form-control autosize-input did" placeholder="What You Did ?"></textarea>
-                                    </div>
-                                    <div class="form-group col-12 mt-4">
-                                        <textarea name="todo" rows="5" class="form-control autosize-input did" placeholder="Tomorrow Plan ?"></textarea>
-                                    </div>
-                                    <div class="form-group col-12 mt-4">
-                                        <center>
-                                            <button type="submit" class="btn-wide mr-2 btn btn-outline-dark btn-lg btn-details">Submit Details</button>
-                                        </center>
-                                    </div>
-                                </form>
-                            </div> 
-                        </div>
-                   </div>
-                   <div class="offset-1 col-7">
-                       <div class="search-wrapper active">
-                            <div class="input-holder">
-                                <input type="text" class="search-input" placeholder="Type to search">
-                                <button class="search-icon"><span></span></button>
-                            </div>
-                        </div>
-                   </div>
-               </div>
-               
-               <div class="row mt-5">
-                  
-               </div>
-               
-               
-            </div>
-               <div class="col-4 right-main">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-danger dropdown-toggle" style="background: #404040; border:none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img src="/images/dummy.png" alt="" class="img-fluid" width="50px" style="border-radius: 50%;">
-                            <span style="color: white; font-size: 20px">{{todo.name}}</span>
-                        </button>
-                        <div class="dropdown-menu form-group" style="padding: 10px;">
-                            <form action="/change_password" method="POST">
-                            <label for="password">Change Password</label>
-                                <input type="password" class="form-control" name="password" id="passowrd" minlength="5">
-                                <button type="submit" class="btn-wide mb-2 btn btn-lg btn-submit mt-2" style="background-color: #404040; color: white;">Change</button>
-                            </form>
-                        </div>
-                    </div>
-                    <div id="right-scroll">
-                        <h5 class="mt-4">Assigned Project List</h5>
-                        {{#each projects_name}}
-                        <hr style="background-color: white;">
-                            <h5 class="my-4" style="line-height:20px;">Project - {{project_name}}</h5>
-                            
-                            {{#each ../project_details}}
-                                {{#if ../project_name name}}
-                                    
-                                    <p class="py-1" style="line-height: 20px;">{{todo}} 
-                                        <span>
-                                            <a href="/edit/project_todos/status/{{id}}/{{status}}" class="ml-3 btn {{#if status 0}}btn-outline-light{{else}}btn-success{{/if}} btn-sm btn-submit">{{#if status 0}}complete{{else}}completed{{/if}}</a>
-                                        </span>
-                                    </p>
-                                {{/if}}
-                            {{/each}}
-                        {{/each}}
-                    </div>
-                    
-               </div>
-           </div>
-       </div>
-   </div>
+<div class="col-md-5 mt-3">
+  
+    <form action="/main" method="POST"> 
+        <div class="form-group col-12">
+            <textarea name="done" rows="9"  class="form-control autosize-input did" placeholder="What You Did ?"></textarea>
+        </div>
+        <div class="form-group col-12 mt-4">
+            <textarea name="todo" rows="9" class="form-control autosize-input did" placeholder="Tomorrow Plan ?"></textarea>
+        </div>
+        <div class="form-group col-12 mt-4">
+            <center>
+                <button type="submit" class="btn-wide mb-2 mr-2 btn btn-outline-light btn-lg btn-submit">Submit Details</button>
+            </center>
+        </div>
+    </form>
+            
+</div>
+
+
+
+<div class="col-4 right-main">
+
+<div id="right-scroll">
+    <h5 class="mt-4">Assigned Project List</h5>
+    {{#each projects_name}}
+    <hr style="background-color: white;">
+        <h5 class="my-4" style="line-height:20px;">Project - {{project_name}}</h5>
+        
+        {{#each ../project_details}}
+            {{#if ../project_name name}}
+                
+                <p class="py-1" style="line-height: 20px;">
+                    <a href="/view_todos_details/{{id}}" style="text-decoration: none; color:white;">{{todo}}</a> 
+                    <span>
+                        <a class="ml-3 btn {{#if status 0}}btn-outline-light{{/if}}{{#if status 2}}btn-success{{/if}}{{#if status 1}}btn-danger{{/if}} btn-sm btn-submit">{{#if status 0}}open{{/if}}{{#if status 1}}closed{{/if}}{{#if status 2}}resolved{{/if}}</a>
+                    </span>
+                </p>
+            {{/if}}
+        {{/each}}
+    {{/each}}
+</div>
+
+</div>
+          
+
 
    <script type="text/javascript">
-
-    setInterval(() => {
-        var date = new Date()
-        document.getElementById("date").innerHTML = date
-    }, 1000)
     
-    let deviceHeight1 = window.innerHeight - 30
-    let deviceHeight2 = window.innerHeight - 100
+    let deviceHeight1 = window.innerHeight - 78
+    let deviceHeight2 = window.innerHeight - 122
     document.getElementById("main-scroll").style.height = deviceHeight1 + "px";
     document.getElementById("right-scroll").style.height = deviceHeight2 + "px";
 </script>
-</body>
-</html>
+{{!-- </body> --}}
+{{!-- </html> --}}
 
