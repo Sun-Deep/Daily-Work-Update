@@ -143,7 +143,7 @@ router.get('/search_todos', verify_route, (req, res) => {
 // get all project todos
 router.get('/project_todos/:id', verify_route, (req, res) => {
     let project_id = req.params.id
-    con.query("SELECT id, todo, status FROM projects_todo WHERE project_id = ?",[project_id],
+    con.query("SELECT projects_todo.id, projects_todo.todo, projects_todo.status FROM projects_todo JOIN assigned_projects ON assigned_projects.user_id = ? AND assigned_projects.project_id = projects_todo.project_id AND projects_todo.project_id = ?",[req.user_id, project_id],
     (error, todos, fields) => {
         // console.log(todos)
         return res.json(todos)
@@ -153,13 +153,15 @@ router.get('/project_todos/:id', verify_route, (req, res) => {
 // load view_todos_details page
 router.get('/view_todos_details/:id', verify_route, (req, res) => {
     let todo_id = req.params.id
-    con.query("SELECT projects_todo.id, projects_todo.status, projects_todo.todo, projects_todo.description, projects_todo.file, projects_todo.user_id, DATE_FORMAT(projects_todo.date_time, '%b %d, %Y %a %k:%i:%s') AS date_time, users.name FROM projects_todo JOIN users ON users.id = projects_todo.user_id AND projects_todo.id = ?",
-    [todo_id], (error, todo_info, fields) => {
+    con.query("SELECT projects_todo.id, projects_todo.status, projects_todo.todo, projects_todo.description, projects_todo.file, projects_todo.user_id, DATE_FORMAT(projects_todo.date_time, '%b %d, %Y %a %k:%i:%s') AS date_time, users.name FROM projects_todo JOIN users ON users.id = projects_todo.user_id AND projects_todo.id = ? JOIN assigned_projects ON assigned_projects.user_id = ? AND projects_todo.project_id = assigned_projects.project_id",
+    [todo_id, req.user_id], (error, todo_info, fields) => {
         if (error){
             throw error
         }else{
+            if(todo_info.length == 0){
+                return res.redirect('/')
+            }
             todo_info[0]['logged_userid'] = req.user_id
-            console.log(todo_info[0])
             con.query("SELECT users.name FROM users JOIN assigned_projects ON users.id = assigned_projects.user_id JOIN assigned_todos ON assigned_projects.id = assigned_todos.assigned_projects_id AND assigned_todos.assigned_todo = ?",
             [todo_id], (error, user_list, fields) => {
                 if (error){

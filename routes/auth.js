@@ -397,7 +397,7 @@ router.post('/add_project_todo', cpUpload, verify_route, verify_role, (req, res)
                     if(todo.length == 0 || description.length == 0){
                         continue
                     }else{
-                        console.log(todo, description, file, user_id, date_time, file)
+                        
                         con.query("INSERT INTO projects_todo (todo, description, file, project_id, user_id, date_time) VALUES (?, ?, ?, ?, ?, ?)",
                         [todo, description, file, project_id, user_id, formattedDate], (error, results, fields) => {
                                 if(error){

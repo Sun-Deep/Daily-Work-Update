@@ -32,7 +32,7 @@
                             {{/if}}
                             {{#if status 1}}
                             <td>
-                                <button class="btn btn-success btn-sm p-1 my-2">closed</button>
+                                <button class="btn btn-danger btn-sm p-1 my-2">closed</button>
                             </td>
                             {{/if}}
                             {{#if status 2}}
@@ -41,7 +41,7 @@
                             </td>
                             {{/if}}
                             <td>
-                                <a href="/admin/remove_assigned_todo/{{assigned_todos_id}}/{{assigned_projects_id}}/{{project_id}}" class="btn btn-danger">Remove Assigned</a>
+                                <a href="/admin/remove_assigned_todo/{{assigned_todos_id}}/{{assigned_projects_id}}/{{project_id}}" class="btn btn-warning text-white">Remove Assigned</a>
                             </td>
                         </tr>
                         {{/each}}

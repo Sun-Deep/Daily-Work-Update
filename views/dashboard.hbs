@@ -64,9 +64,11 @@
                     let title = 'Todo List  <a href="/admin/view_todos/'+project_id+'" class="btn btn-primary ml-3">View In Details</a>'  
                     for (let i = 0; i < data.length; i++){
                         if(data[i].status == 0){
-                            anchor = '<a href="/edit/project_todos/status/'+data[i].id+'/'+ data[i].status+'" class="btn btn-outline-info btn-sm ml-3">incomplete</a>'
+                            anchor = '<button class="btn btn-outline-info btn-sm ml-3">open</button>'
+                        }else if (data[i].status == 1){
+                             anchor = '<button class="btn btn-outline-danger btn-sm ml-3">closed</button>'
                         }else{
-                             anchor = '<a href="/edit/project_todos/status/'+data[i].id+'/'+ data[i].status+'" class="btn btn-success btn-sm ml-3">completed</a>'
+                            anchor = '<button class="btn btn-outline-success btn-sm ml-3">resolved</button>'
                         }
                         result += '<p>'+data[i].todo +' '+ anchor+'</p>'
                     }
@@ -109,9 +111,11 @@
                             for (i = 0; i < todos.length; i++){
                                
                                 if(todos[i].status == 0){
-                                    button = '<button class="btn btn-outline-info btn-sm ml-3">incomplete</button>'
+                                    button = '<button class="btn btn-outline-info btn-sm ml-3">open</button>'
+                                }else if (todos[i].status == 2){
+                                    button = '<button class="btn btn-success btn-sm ml-3">resolved</button>'
                                 }else{
-                                    button = '<button class="btn btn-success btn-sm ml-3">completed</button>'
+                                    button = '<button class="btn btn-danger btn-sm ml-3">closed</button>'
                                 }
                                 result += '<a href="/admin/view_todos_details/'+todos[i].id+'">'+todos[i].todo+' ('+todos[i].name+') </a>'+ button +'<br/><br/>'
                             }
@@ -121,22 +125,6 @@
                         }
                     }
                 })
-              /*  if (data.length > 0){
-                    var result = ''
-                    let anchor = ''
-                    let title = 'User Todo List  <a href="/admin/view_todos/'+user_id+'" class="btn btn-primary ml-3">View In Details</a>'  
-                    for (let i = 0; i < data.length; i++){
-                        if(data[i].status == 0){
-                            anchor = '<a href="/edit/project_todos/status/'+data[i].id+'/'+ data[i].status+'" class="btn btn-outline-info btn-sm ml-3">incomplete</a>'
-                        }else{
-                             anchor = '<a href="/edit/project_todos/status/'+data[i].id+'/'+ data[i].status+'" class="btn btn-success btn-sm ml-3">completed</a>'
-                        }
-                        result += '<p>'+data[i].todo +' '+ anchor+'</p>'
-                    }
-                    result += '</div>'
-                    $("#in_details").html(title)
-                    $("#todo").append(result)
-                } */
             }
         })
     }
