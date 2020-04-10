@@ -70,7 +70,7 @@
                         }else{
                             anchor = '<button class="btn btn-outline-success btn-sm ml-3">resolved</button>'
                         }
-                        result += '<p>'+data[i].todo +' '+ anchor+'</p>'
+                        result += '<p># '+data[i].id +' '+data[i].todo +' '+ anchor+'</p>'
                     }
                     result += '</div>'
                     $("#in_details").html(title)
@@ -117,7 +117,7 @@
                                 }else{
                                     button = '<button class="btn btn-danger btn-sm ml-3">closed</button>'
                                 }
-                                result += '<a href="/admin/view_todos_details/'+todos[i].id+'">'+todos[i].todo+' ('+todos[i].name+') </a>'+ button +'<br/><br/>'
+                                result += '<a href="/admin/view_todos_details/'+todos[i].id+'"> #'+todos[i].id+' '+todos[i].todo+' ('+todos[i].name+') </a>'+ button +'<br/><br/>'
                             }
                             result += '</div>'
                             $("#in_details").html(title)

@@ -195,12 +195,12 @@ router.post('/edit/user', verify_route, verify_role, (req, res) => {
     const {error, value} = schema.validate(req.body, {abortEarly: false})
     
     if(error){
-        console.log(error)
+        // console.log(error)
         res.redirect('/admin/signup')
     }else{
                 con.query("UPDATE users SET name = ?, email = ?, designation = ?, role = ?, status = ? WHERE id = ?",
                 [value.name, value.email, value.designation, value.role, value.status, value.id], (error, result, fields) => {
-                   console.log(value)
+                //    console.log(value)
                     if (error){
                         throw error
                     }else{
@@ -650,7 +650,7 @@ router.get('/view_todos_details/:id', verify_route, verify_role, (req, res) => {
             throw error
         }else{
             todo_info[0]['logged_userid'] = req.user_id
-            console.log(todo_info[0])
+            // console.log(todo_info[0])
             con.query("SELECT users.name FROM users JOIN assigned_projects ON users.id = assigned_projects.user_id JOIN assigned_todos ON assigned_projects.id = assigned_todos.assigned_projects_id AND assigned_todos.assigned_todo = ?",
             [todo_id], (error, user_list, fields) => {
                 if (error){
