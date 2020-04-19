@@ -67,12 +67,46 @@
                             <div class="position-relative form-group">
                                 <label for="status">Issue Status: </label>
                                <select name="status" id="status" class="form-control">
-                                   <option value="">-- Select --</option>
-                                   <option value="0">Open</option>
-                                   <option value="2">Resolved</option>
                                    {{#if todo_info.user_id todo_info.logged_userid}}
-                                   <option value="1">Closed</option>
-                                   {{/if}}
+                                        {{#if todo_info.status 0}}
+                                            <option value="0" selected>Open</option>
+                                            <option value="1">Closed</option>
+                                            <option value="2">Resolved</option>
+                                        {{/if}}
+                                        {{#if todo_info.status 1}}
+                                            <option value="0">Open</option>
+                                            <option value="1" selected>Closed</option>
+                                            <option value="2">Resolved</option>
+                                        {{/if}}
+                                        {{#if todo_info.status 2}}
+                                            <option value="0">Open</option>
+                                            <option value="1">Closed</option>
+                                            <option value="2" selected>Resolved</option>
+                                        {{/if}}
+
+                                    {{else}}
+                                    
+
+                                    {{#if owner.owner_id todo_info.logged_userid}}
+                                        {{#if todo_info.status 0}}
+                                            <option value="0" selected>Open</option>
+                                            <option value="2">Resolved</option>
+                                        {{/if}}
+                                        {{#if todo_info.status 2}}
+                                            <option value="0">Open</option>
+                                            <option value="2" selected>Resolved</option>
+                                        {{/if}}
+
+                                    {{else}}
+                                        {{#if todo_info.status 0}}
+                                            <option value="">--Select--</option>
+                                            <option value="0" selected>Open</option>
+                                        {{else}}
+                                            <option value="" selected>--Select--</option>
+                                            <option value="0">Open</option>
+                                        {{/if}}
+                                    {{/if}}
+                                {{/if}}
                                </select>
                             </div>
                                 <input type="hidden" name="todo_id" value="{{todo_info.id}}">

@@ -396,10 +396,10 @@ router.post('/add_project_todo', cpUpload, verify_route, verify_role, (req, res)
 
                     if(todo.length == 0 || description.length == 0){
                         continue
-                    }else{
+                    }else{  
                         
-                        con.query("INSERT INTO projects_todo (todo, description, file, project_id, user_id, date_time) VALUES (?, ?, ?, ?, ?, ?)",
-                        [todo, description, file, project_id, user_id, formattedDate], (error, results, fields) => {
+                        con.query("INSERT INTO projects_todo (todo, description, file, project_id, user_id, owner_id, date_time) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                        [todo, description, file, project_id, user_id, user_id, formattedDate], (error, results, fields) => {
                                 if(error){
                                     return con.rollback(() => {
                                         throw error
@@ -644,8 +644,8 @@ router.get('/view_user_todo_done/:user_id', (req, res) => {
 // load view_todos_details page
 router.get('/view_todos_details/:id', verify_route, verify_role, (req, res) => {
     let todo_id = req.params.id
-    con.query("SELECT projects_todo.id, projects_todo.status, projects_todo.todo, projects_todo.description, projects_todo.file, projects_todo.user_id, DATE_FORMAT(projects_todo.date_time, '%b %d, %Y %a %k:%i:%s') AS date_time, users.name FROM projects_todo JOIN users ON users.id = projects_todo.user_id AND projects_todo.id = ? JOIN assigned_projects ON assigned_projects.user_id = ? AND projects_todo.project_id = assigned_projects.project_id",
-    [todo_id, req.user_id], (error, todo_info, fields) => {
+    con.query("SELECT projects_todo.id, projects_todo.status, projects_todo.todo, projects_todo.description, projects_todo.file, projects_todo.user_id, DATE_FORMAT(projects_todo.date_time, '%b %d, %Y %a %k:%i:%s') AS date_time, users.name FROM projects_todo JOIN users ON users.id = projects_todo.user_id AND projects_todo.id = ?",
+    [todo_id], (error, todo_info, fields) => {
         if (error){
             throw error
         }else{
@@ -664,7 +664,21 @@ router.get('/view_todos_details/:id', verify_route, verify_role, (req, res) => {
                         if (error){
                             throw error
                         }else{
-                            res.render('view_todo_details', {todo_info: todo_info[0], user_list: user_list, comments: comments})
+                            con.query("SELECT projects_todo.owner_id, users.name FROM projects_todo, users WHERE projects_todo.owner_id = users.id AND projects_todo.id = ?",
+                            [todo_id], (error, owner, fields) => {
+                                if (error){
+                                    throw error
+                                }else{
+                                    con.query("SELECT id, name FROM users", (error, users, fields) => {
+                                        if(error){
+                                            throw error
+                                        }else{
+                                            res.render('view_todo_details', {todo_info: todo_info[0], user_list: user_list, comments: comments, owner: owner[0], users: users})
+                                        }
+                                    })
+                                }
+                            })
+                            
                         }
                     })
                 }
@@ -679,8 +693,8 @@ router.get('/view_todos_details/:id', verify_route, verify_role, (req, res) => {
 // search todo according to todo id
 router.post('/view_todos_details/', verify_route, verify_role, (req, res) => {
     let todo_id = req.body.id
-    con.query("SELECT projects_todo.id, projects_todo.status, projects_todo.todo, projects_todo.description, projects_todo.file, projects_todo.user_id, DATE_FORMAT(projects_todo.date_time, '%b %d, %Y %a %k:%i:%s') AS date_time, users.name FROM projects_todo JOIN users ON users.id = projects_todo.user_id AND projects_todo.id = ? JOIN assigned_projects ON assigned_projects.user_id = ? AND projects_todo.project_id = assigned_projects.project_id",
-    [todo_id, req.user_id], (error, todo_info, fields) => {
+    con.query("SELECT projects_todo.id, projects_todo.status, projects_todo.todo, projects_todo.description, projects_todo.file, projects_todo.user_id, DATE_FORMAT(projects_todo.date_time, '%b %d, %Y %a %k:%i:%s') AS date_time, users.name FROM projects_todo JOIN users ON users.id = projects_todo.user_id AND projects_todo.id = ?",
+    [todo_id], (error, todo_info, fields) => {
         if (error){
             throw error
         }else{
@@ -698,7 +712,21 @@ router.post('/view_todos_details/', verify_route, verify_role, (req, res) => {
                         if (error){
                             throw error
                         }else{
-                            res.render('view_todo_details', {todo_info: todo_info[0], user_list: user_list, comments: comments})
+                            con.query("SELECT projects_todo.owner_id, users.name FROM projects_todo, users WHERE projects_todo.owner_id = users.id AND projects_todo.id = ?",
+                            [todo_id], (error, owner, fields) => {
+                                if (error){
+                                    throw error
+                                }else{
+                                    con.query("SELECT id, name FROM users", (error, users, fields) => {
+                                        if(error){
+                                            throw error
+                                        }else{
+                                            res.render('view_todo_details', {todo_info: todo_info[0], user_list: user_list, comments: comments, owner: owner[0], users: users})
+                                        }
+                                    })
+                                    
+                                }
+                            })
                         }
                     })
                 } 
@@ -741,13 +769,24 @@ router.post('/todo_reply', upload.single('issue_file'), verify_route, (req, res)
                     throw error
                 })
             }
-            con.query("UPDATE projects_todo SET STATUS = ? WHERE id = ?",[req.body.status, todo_id],
-            (error, results1, fields) => {
-                if (error){
-                    return con.rollback(function(){
-                        throw error
+            if (req.body.status != ''){
+                con.query("UPDATE projects_todo SET STATUS = ? WHERE id = ?",[req.body.status, todo_id],
+                (error, results1, fields) => {
+                    if (error){
+                        return con.rollback(function(){
+                            throw error
+                        })
+                    }
+                    con.commit(function(err){
+                        if (err){
+                            return con.rollback(function(){
+                                throw err
+                            })
+                        }
+                        res.redirect('/admin/view_todos_details/'+todo_id)
                     })
-                }
+                })
+            }else{
                 con.commit(function(err){
                     if (err){
                         return con.rollback(function(){
@@ -756,10 +795,25 @@ router.post('/todo_reply', upload.single('issue_file'), verify_route, (req, res)
                     }
                     res.redirect('/admin/view_todos_details/'+todo_id)
                 })
-            })
+            }
+            
         })
     })
     
+})
+
+// change owner of project todo
+router.post('/change_owner', verify_route, verify_role, (req, res) => {
+    let todo_id = req.body.todo_id
+    let owner_id = req.body.owner
+
+    con.query("UPDATE projects_todo SET owner_id = ? WHERE id = ?", [owner_id, todo_id], (error, results, fields) => {
+        if (error){
+            throw error
+        }else{
+            res.redirect('/admin/view_todos_details/'+todo_id)
+        }
+    })
 })
 
 module.exports = router

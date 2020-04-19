@@ -45,10 +45,25 @@
                 </div>
                 <div class="col-7">
                     <p>Assigned To: {{#each user_list}} {{name}} {{/each}}</p>
+                    <p>Owner: <strong>{{owner.name}}</strong></p>
                 </div>
                 <div class="col-3">
-                    <span class="btn btn-info">Add</span>
-                    <span class="btn btn-warning text-white">Change Owner</span>
+                    <div class="btn-group">
+                        <button type="button" class="btn dropdown-toggle btn-warning text-white" style="border:none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span style="">Change Owner</span>
+                        </button>
+                        <div class="dropdown-menu form-group" style="padding: 20px;">
+                            <form action="/admin/change_owner" method="POST">
+                                <select name="owner" id="owner" class="form-control" class="text-dark">
+                                    {{#each users}}
+                                        <option value="{{id}}">{{name}}</option>
+                                    {{/each}}
+                                </select>
+                                <input type="hidden" value="{{todo_info.id}}" name="todo_id">
+                                <button type="submit" class="btn-wide mb-2 mr-2 btn btn-lg btn-submit mt-2" style="background-color: cornflowerblue; color: white;">Change</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-12">
                     <hr>
@@ -94,12 +109,81 @@
                             <div class="position-relative form-group">
                                 <label for="status">Issue Status: </label>
                                <select name="status" id="status" class="form-control">
-                                   <option value="">-- Select --</option>
-                                   <option value="0">Open</option>
-                                   <option value="2">Resolved</option>
+
                                    {{#if todo_info.user_id todo_info.logged_userid}}
-                                   <option value="1">Closed</option>
-                                   {{/if}}
+                                        {{#if todo_info.status 0}}
+                                            <option value="0" selected>Open</option>
+                                            <option value="1">Closed</option>
+                                            <option value="2">Resolved</option>
+                                        {{/if}}
+                                        {{#if todo_info.status 1}}
+                                            <option value="0">Open</option>
+                                            <option value="1" selected>Closed</option>
+                                            <option value="2">Resolved</option>
+                                        {{/if}}
+                                        {{#if todo_info.status 2}}
+                                            <option value="0">Open</option>
+                                            <option value="1">Closed</option>
+                                            <option value="2" selected>Resolved</option>
+                                        {{/if}}
+
+                                    {{else}}
+                                    
+
+                                    {{#if owner.owner_id todo_info.logged_userid}}
+                                        {{#if todo_info.status 0}}
+                                            <option value="0" selected>Open</option>
+                                            <option value="2">Resolved</option>
+                                        {{/if}}
+                                        {{#if todo_info.status 2}}
+                                            <option value="0">Open</option>
+                                            <option value="2" selected>Resolved</option>
+                                        {{/if}}
+
+                                    {{else}}
+                                        {{#if todo_info.status 0}}
+                                            <option value="">--Select--</option>
+                                            <option value="0" selected>Open</option>
+                                        {{else}}
+                                            <option value="" selected>--Select--</option>
+                                            <option value="0">Open</option>
+                                        {{/if}}
+                                    {{/if}}
+                                {{/if}}
+                                    {{!-- {{#if todo_info.user_id todo_info.logged_userid}}
+                                        {{#if todo_info.status 0}}
+                                            <option value="0" selected>Open</option>
+                                            <option value="2">Resolved</option>
+                                            <option value="1">Closed</option>
+                                        {{/if}}
+                                        {{#if todo_info.status 1}}
+                                            <option value="0">Open</option>
+                                            <option value="2">Resolved</option>
+                                            <option value="1" selected>Closed</option>
+                                        {{/if}}
+                                        {{#if todo_info.status 2}}
+                                            <option value="0">Open</option>
+                                            <option value="2" selected>Resolved</option>
+                                            <option value="1">Closed</option>
+                                        {{/if}}
+                                    {{else}}
+                                        {{#if owner.owner_id todo_info.logged_userid}}
+                                            {{#if todo_info.status 0}}
+                                                <option value="2">Resolved</option>
+                                                <option value="0" selected>Open</option>
+                                            {{/if}}
+                                            {{#if todo_info.status 2}}
+                                                <option value="2" selected>Resolved</option>
+                                                <option value="0">Open</option>
+                                            {{/if}}
+
+                                        {{else}}
+                                            <option value="">--Select--</option>
+                                            <option value="0">Open</option>
+                                        {{/if}}
+                                    {{/if}}
+                                     --}}
+                                    
                                </select>
                             </div>
                                 <input type="hidden" name="todo_id" value="{{todo_info.id}}">

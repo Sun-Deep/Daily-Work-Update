@@ -172,7 +172,14 @@ router.get('/view_todos_details/:id', verify_route, (req, res) => {
                         if (error){
                             throw error
                         }else{
-                            res.render('user_view_todo', {layout: "user", todo_info: todo_info[0], user_list: user_list, comments: comments})
+                            con.query("SELECT projects_todo.owner_id, users.name FROM projects_todo, users WHERE projects_todo.owner_id = users.id AND projects_todo.id = ?",
+                            [todo_id], (error, owner, fields) => {
+                                if (error){
+                                    throw error
+                                }else{ 
+                                    res.render('user_view_todo', {layout: "user", todo_info: todo_info[0], user_list: user_list, comments: comments, owner: owner[0]})   
+                                }
+                            })
                         }
                     })
                 }
@@ -206,7 +213,15 @@ router.post('/view_todos_details/', verify_route, (req, res) => {
                         if (error){
                             throw error
                         }else{
-                            res.render('user_view_todo', {layout: "user", todo_info: todo_info[0], user_list: user_list, comments: comments})
+                            con.query("SELECT projects_todo.owner_id, users.name FROM projects_todo, users WHERE projects_todo.owner_id = users.id AND projects_todo.id = ?",
+                            [todo_id], (error, owner, fields) => {
+                                if (error){
+                                    throw error
+                                }else{ 
+                                    res.render('user_view_todo', {layout: "user", todo_info: todo_info[0], user_list: user_list, comments: comments, owner: owner[0]})   
+                                }
+                            })
+                            
                         }
                     })
                 } 
