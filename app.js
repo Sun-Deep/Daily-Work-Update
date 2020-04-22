@@ -33,8 +33,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //import routes
 
-
-
 const authRoute = require('./routes/auth')
 app.use('/admin/', authRoute)
 

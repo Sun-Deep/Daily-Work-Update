@@ -60,17 +60,35 @@
         .search-wrapper .input-holder .search-icon span::after {
             border: 2px solid black;
         }
-        .nav-item{
+        /* .nav-item{
             margin: 0 15px;
             font-size: 16px;
-        }
+        } */
         .table th, .table td {
             padding: 15px 20px;
         }
-       
+       .fa-bell{
+            color: black;
+        }
+        .red-dot{
+            color: white;
+            font-size: 12px;
+            background-color: red;
+            padding: 3px;
+            position: absolute;
+            border-radius: 50%;
+            line-height: 8px;
+        }
+        .dropdown-menu-xl{
+            transform: translate3d(-212px, 32px, 0px) !important;
+        }
+        .dropdown-menu.dropdown-menu-right{
+            right: auto !important;
+        }
+        .nav{
+            flex-wrap: nowrap;
+        }
     </style>
-    
-    
 </head>
 <body>
 
@@ -86,9 +104,12 @@
       <li class="nav-item">
         <a class="nav-link" href="/search_todos">Search Project Issues</a>
       </li>
-      
-    
     </ul>
+    <div class="app-header__content">
+        <div class="app-header-right">
+            {{> user_header}}
+        </div>
+    </div>
     <div class="btn-group">
         <button type="button" class="btn dropdown-toggle" style="border:none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <img src="/images/dummy.png" alt="" class="img-fluid" width="30px" style="border-radius: 50%;">
@@ -113,7 +134,6 @@
            
   </div>
 </nav>
-
 
 <div class="conatiner-fluid">
     <div class="row">

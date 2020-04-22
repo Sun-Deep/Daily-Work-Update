@@ -45,6 +45,7 @@ router.get('/', verify_route, (req, res) => {
                     }
 
                     res.render('main', {
+                        notification: notification, 
                         layout: "user",
                         todo: results[0], 
                         done: results,
@@ -136,7 +137,7 @@ router.get('/search_todos', verify_route, (req, res) => {
         if (error){
             throw error
         }
-        res.render('user_search_todos', {layout: "user", projects: projects})
+        res.render('user_search_todos', {layout: "user", notification: notification, projects: projects})
     })
 })
 
@@ -177,7 +178,7 @@ router.get('/view_todos_details/:id', verify_route, (req, res) => {
                                 if (error){
                                     throw error
                                 }else{ 
-                                    res.render('user_view_todo', {layout: "user", todo_info: todo_info[0], user_list: user_list, comments: comments, owner: owner[0]})   
+                                    res.render('user_view_todo', {layout: "user", notification: notification, todo_info: todo_info[0], user_list: user_list, comments: comments, owner: owner[0]})   
                                 }
                             })
                         }
@@ -218,7 +219,7 @@ router.post('/view_todos_details/', verify_route, (req, res) => {
                                 if (error){
                                     throw error
                                 }else{ 
-                                    res.render('user_view_todo', {layout: "user", todo_info: todo_info[0], user_list: user_list, comments: comments, owner: owner[0]})   
+                                    res.render('user_view_todo', {layout: "user", notification: notification, todo_info: todo_info[0], user_list: user_list, comments: comments, owner: owner[0]})   
                                 }
                             })
                             
@@ -228,6 +229,15 @@ router.post('/view_todos_details/', verify_route, (req, res) => {
             })
         }
         
+    })
+})
+
+// change notification read status
+router.get('/notification/read/:id', verify_route, (req, res) => {
+    let id = parseInt(req.params.id)
+    con.query("UPDATE notifications SET seen = 1 WHERE id = ?", [id], (error, results, fields) => {
+        if (error) throw error
+        res.json("success")
     })
 })
 module.exports = router

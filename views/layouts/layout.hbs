@@ -54,6 +54,18 @@
         .search-wrapper.active .input-holder {
             width: 80%;
         }
+        .fa-bell{
+            color: black;
+        }
+        .red-dot{
+            color: white;
+            font-size: 12px;
+            background-color: red;
+            padding: 3px;
+            position: absolute;
+            border-radius: 50%;
+            line-height: 8px;
+        }
     </style>
     
 </head>
@@ -94,24 +106,21 @@
                     </button>
                 </span>
             </div>
-            <div class="app-header__content">
-                <div class="app-header-right">
-                    <div class="btn-group">
-                <button type="button" class="btn dropdown-toggle" style="border:none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img src="/images/dummy.png" alt="" class="img-fluid" width="50px" style="border-radius: 50%;">
-                    <span style="color: white; font-size: 20px">{{results.name}}</span>
-                </button>
-                <div class="dropdown-menu form-group" style="padding: 10px;">
-                    <form action="/change_password" method="POST">
-                    <label for="password">Change Password</label>
-                        <input type="password" class="form-control" name="password" id="passowrd" minlength="5">
-                        <button type="submit" class="btn-wide mb-2 mr-2 btn btn-lg btn-submit mt-2" style="background-color: cornflowerblue; color: white;">Change</button>
-                    </form>
-                </div>
-                </div>
-                </div>
-            </div>
             
+            {{> admin_header}}
+            <div class="btn-group">
+            <button type="button" class="btn dropdown-toggle" style="border:none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <img src="/images/dummy.png" alt="" class="img-fluid" width="50px" style="border-radius: 50%;">
+                <span style="color: white; font-size: 20px">{{results.name}}</span>
+            </button>
+            <div class="dropdown-menu form-group" style="padding: 10px;">
+                <form action="/change_password" method="POST">
+                <label for="password">Change Password</label>
+                    <input type="password" class="form-control" name="password" id="passowrd" minlength="5">
+                    <button type="submit" class="btn-wide mb-2 mr-2 btn btn-lg btn-submit mt-2" style="background-color: cornflowerblue; color: white;">Change</button>
+                </form>
+            </div>
+        </div>
         </div>
         
         <div class="app-main">

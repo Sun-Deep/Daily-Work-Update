@@ -50,7 +50,7 @@ router.get('/', verify_route, verify_role, (req, res) => {
                     throw error
                 }else{
                     const total_projects = Object.keys(projects).length
-                    res.render('dashboard', {total_employee: total_employee, employee: employee, total_projects: total_projects, projects: projects})
+                    res.render('dashboard', {notification: notification, total_employee: total_employee, employee: employee, total_projects: total_projects, projects: projects})
                 }
             })
         }
@@ -60,7 +60,7 @@ router.get('/', verify_route, verify_role, (req, res) => {
 
 // load signup page
 router.get('/signup', verify_route, verify_role, (req, res) => {
-    res.render('signup')
+    res.render('signup', {notification: notification})
 })
 
 
@@ -134,7 +134,7 @@ router.post('/logincheck', (req, res) => {
 // get the lists of the users
 router.get('/view_users', verify_route, verify_role, (req, res) => {
     con.query("SELECT id, name, email, designation, role, status FROM users", (error, users, fields) => {
-        res.render('view_users', {users: users})
+        res.render('view_users', {notification: notification, users: users})
     })
     
 })
@@ -161,7 +161,7 @@ router.get('/view_user/details/:id', verify_route, verify_role, (req, res) => {
                         if (error){
                             throw error
                         }else{
-                            res.render('view_user_details', {user: user[0], user_details: user_details, projects: projects})
+                            res.render('view_user_details', {notification: notification, user: user[0], user_details: user_details, projects: projects})
                         }
                     })
                 }
@@ -176,7 +176,7 @@ router.get('/view_user/details/:id', verify_route, verify_role, (req, res) => {
 router.get('/edit/user/:id', verify_route, verify_role, (req, res) => {
     var id = req.params.id
     con.query("SELECT * FROM users WHERE id = ?", [id], (error, user, fields) => {
-        res.render("edit_user", {user: user[0]})
+        res.render("edit_user", {notification: notification, user: user[0]})
     })
 })
 
@@ -226,7 +226,7 @@ router.get('/inactive/user/:id', verify_route, verify_role, (req, res) => {
 // view inactive users
 router.get('/inactive_users', verify_route, verify_role, (req, res) => {
     con.query("SELECT id, name, email, designation, role, status FROM users WHERE status = 0", (error, users, fields) => {
-        res.render('inactive_users', {users: users})
+        res.render('inactive_users', {notification: notification, users: users})
     })
 })
 
@@ -245,7 +245,7 @@ router.get('/active/user/:id', verify_route, verify_role, (req, res) => {
 // projects
 // add new projects
 router.get('/add_project', verify_route, verify_role, (req, res) => {
-    res.render('add_project')
+    res.render('add_project', {notification: notification})
 })
 
 
@@ -282,7 +282,7 @@ router.get('/project_details', verify_route, verify_role, (req, res) => {
             for(let i = 0; i < Object.keys(project_details).length; i++){
                 project_details[i]['short_details'] = project_details[i]['details'].substring(0, 100) + '...'
             }
-            res.render('project_list', {project_details: project_details})
+            res.render('project_list', {notification: notification, project_details: project_details})
         }
     })
 
@@ -299,7 +299,7 @@ router.get('/project_details/:id', verify_route, verify_role, (req, res) => {
                 if (error){
                     throw error
                 }else{
-                    res.render('view_project_details', {project: project[0], assigned_users: assigned_users})
+                    res.render('view_project_details', {notification: notification, project: project[0], assigned_users: assigned_users})
                 }
             })
         }
@@ -312,7 +312,7 @@ router.get('/edit/project_details/:id', verify_route, verify_role, (req, res) =>
         if (error){
             throw error
         }else{
-            res.render('edit_project_details', {project: project[0]})  
+            res.render('edit_project_details', {notification: notification, project: project[0]})  
         }
     })
     
@@ -353,7 +353,7 @@ router.get('/add_project_todo', verify_route, verify_role, (req, res) => {
         if (error){
             throw error
         }else{
-            res.render('add_project_todo', {projects: projects})
+            res.render('add_project_todo', {notification: notification, projects: projects})
         }
     })
 })
@@ -454,7 +454,7 @@ router.get('/assign_programmer', verify_route, verify_role, (req, res) => {
                 if (error){
                     throw error
                 }
-                res.render('assign_programmer', {users: users, projects: projects})
+                res.render('assign_programmer', {notification: notification, users: users, projects: projects})
             })
         }
     })
@@ -484,7 +484,26 @@ router.post('/assign_programmer', verify_route, verify_role, (req, res) => {
                                 return con.rollback(() => {
                                     throw error
                                 })
+                            }else{
+                                con.query("SELECT id, todo FROM projects_todo WHERE id = ?", [project_todo[i]],
+                                (error, todo, fields) => {
+                                    if(error){
+                                        return con.rollback(() => {
+                                            throw error
+                                        })
+                                    }else{
+                                        con.query("INSERT INTO notifications (title, type, notify_id, user_id) VALUES (?, 'i', ?, ?)",
+                                        [todo[0].todo, project_todo[i], req.body.programmer], (error, results2, fields) => {
+                                            if (error){
+                                                return con.rollback(() => {
+                                                    throw error
+                                                })
+                                            }
+                                        })
+                                    }
+                                })
                             }
+
                         })
                     }
                 }else{
@@ -493,6 +512,24 @@ router.post('/assign_programmer', verify_route, verify_role, (req, res) => {
                         if (error){
                             return con.rollback(() => {
                                 throw error
+                            })
+                        }else{
+                            con.query("SELECT id, todo FROM projects_todo WHERE id = ?", [project_todo],
+                            (error, todo, fields) => {
+                                if(error){
+                                    return con.rollback(() => {
+                                        throw error
+                                    })
+                                }else{
+                                    con.query("INSERT INTO notifications (title, type, notify_id, user_id) VALUES (?, 'i', ?, ?)",
+                                    [todo[0].todo, project_todo, req.body.programmer], (error, results2, fields) => {
+                                        if (error){
+                                            return con.rollback(() => {
+                                                throw error
+                                            })
+                                        }
+                                    })
+                                }
                             })
                         }
                     })
@@ -521,12 +558,12 @@ router.get('/view_todos/:project_id', verify_route, verify_role, (req, res) => {
             if(Object.keys(todos).length == 0){
                 con.query("SELECT projects_todo.id, projects_todo.todo FROM projects_todo WHERE projects_todo.project_id = ? AND NOT EXISTS (SELECT assigned_todos.assigned_todo FROM assigned_todos WHERE projects_todo.id = assigned_todos.assigned_todo)",
                 [req.params.project_id], (error, todos_not_assigned, fields) => {
-                res.render('view_todos', {todos_not_assigned: todos_not_assigned})
+                res.render('view_todos', {notification: notification, todos_not_assigned: todos_not_assigned})
                 })
             }else{
                 con.query("SELECT projects_todo.id, projects_todo.todo FROM projects_todo WHERE projects_todo.project_id = ? AND NOT EXISTS (SELECT assigned_todos.assigned_todo FROM assigned_todos WHERE projects_todo.id = assigned_todos.assigned_todo)",
                 [req.params.project_id], (error, todos_not_assigned, fields) => {
-                res.render('view_todos', {todos: todos, project_name: todos[0].project_name, todos_not_assigned: todos_not_assigned})
+                res.render('view_todos', {notification: notification, todos: todos, project_name: todos[0].project_name, todos_not_assigned: todos_not_assigned})
                 })
             }
             
@@ -611,11 +648,7 @@ router.get('/remove_assigned_todo/:assigned_todo_id/:assigned_projects_id/:proje
 // user todos
 router.get('/view_user_todos/:user_id', verify_route, (req, res) => {
     let user_id = req.params.user_id
-    // con.query("SELECT users.name, user_details.user_id AS user_id, user_details.task_done, user_details.task_to_do, DATE_FORMAT(user_details.work_date, '%b %d, %Y %a %k:%i:%s') AS work_date FROM user_details, users WHERE user_details.user_id = users.id AND user_id = 3 ORDER BY work_date DESC LIMIT 1",
-    // [user_id], (error, todo_done, fields) =>{
-    //     if (error){
-    //         throw error
-    //     }else{
+    
             con.query("SELECT projects_todo.id, projects_todo.todo, projects.name, projects_todo.status FROM projects_todo, projects WHERE projects.id = projects_todo.project_id AND projects_todo.id IN (SELECT assigned_todos.assigned_todo FROM assigned_projects, assigned_todos WHERE assigned_projects.id = assigned_todos.assigned_projects_id AND assigned_projects.user_id = ?) ORDER BY projects.name ASC",
             [user_id], (error, todos, fields) => {
                 if (error){
@@ -624,8 +657,7 @@ router.get('/view_user_todos/:user_id', verify_route, (req, res) => {
                     return res.json(todos)
                 }
             })
-    //     }
-    // })
+    
     
 })
 
@@ -644,6 +676,7 @@ router.get('/view_user_todo_done/:user_id', (req, res) => {
 // load view_todos_details page
 router.get('/view_todos_details/:id', verify_route, verify_role, (req, res) => {
     let todo_id = req.params.id
+    console.log(notification)
     con.query("SELECT projects_todo.id, projects_todo.status, projects_todo.todo, projects_todo.description, projects_todo.file, projects_todo.user_id, DATE_FORMAT(projects_todo.date_time, '%b %d, %Y %a %k:%i:%s') AS date_time, users.name FROM projects_todo JOIN users ON users.id = projects_todo.user_id AND projects_todo.id = ?",
     [todo_id], (error, todo_info, fields) => {
         if (error){
@@ -673,7 +706,7 @@ router.get('/view_todos_details/:id', verify_route, verify_role, (req, res) => {
                                         if(error){
                                             throw error
                                         }else{
-                                            res.render('view_todo_details', {todo_info: todo_info[0], user_list: user_list, comments: comments, owner: owner[0], users: users})
+                                            res.render('view_todo_details', {notification: notification, todo_info: todo_info[0], user_list: user_list, comments: comments, owner: owner[0], users: users})
                                         }
                                     })
                                 }
@@ -721,7 +754,7 @@ router.post('/view_todos_details/', verify_route, verify_role, (req, res) => {
                                         if(error){
                                             throw error
                                         }else{
-                                            res.render('view_todo_details', {todo_info: todo_info[0], user_list: user_list, comments: comments, owner: owner[0], users: users})
+                                            res.render('view_todo_details', {notification: notification, todo_info: todo_info[0], user_list: user_list, comments: comments, owner: owner[0], users: users})
                                         }
                                     })
                                     
@@ -742,7 +775,7 @@ router.get('/search_todos', verify_route, verify_role, (req, res) => {
         if (error){
             throw error
         }
-        res.render('search_todos', {projects: projects})
+        res.render('search_todos', {notification: notification, projects: projects})
     })
 })
 
@@ -777,6 +810,34 @@ router.post('/todo_reply', upload.single('issue_file'), verify_route, (req, res)
                             throw error
                         })
                     }
+                    con.query("SELECT projects_todo.user_id, projects_todo.owner_id FROM projects_todo WHERE projects_todo.id = ?",
+                    [todo_id], (error, users, fields) => {
+                    
+                    let users_list = new Set()
+                    users_list.add(users[0].user_id)
+                    if(users[0].owner_id != 0){
+                        users_list.add(users[0].owner_id)
+                    }
+                    
+                    con.query("SELECT assigned_projects.user_id FROM assigned_projects, assigned_todos WHERE assigned_projects.id = assigned_todos.assigned_projects_id AND assigned_todos.assigned_todo = ?",
+                    [todo_id], (error, users2, fields) => {
+                        
+                        for(let z = 0; z < users2.length; z++){
+                            
+                            users_list.add(users2[z].user_id)
+                        }
+                    users_list.delete(req.user_id)
+                    
+                    users_list.forEach(user => {
+                        con.query("INSERT INTO notifications (title, type, notify_id, user_id) VALUES (?, 'ir', ?, ?)",
+                        [req.body.comment.substring(0, 100), todo_id, user], (err, result1, fields) => {
+                            if (error){
+                                return con.rollback(function(){
+                                    throw error
+                                })
+                            }
+                        })
+                    })
                     con.commit(function(err){
                         if (err){
                             return con.rollback(function(){
@@ -785,18 +846,48 @@ router.post('/todo_reply', upload.single('issue_file'), verify_route, (req, res)
                         }
                         res.redirect('/admin/view_todos_details/'+todo_id)
                     })
+                    })
+                })
+                    
                 })
             }else{
-                con.commit(function(err){
-                    if (err){
-                        return con.rollback(function(){
-                            throw err
-                        })
+                con.query("SELECT projects_todo.user_id, projects_todo.owner_id FROM projects_todo WHERE projects_todo.id = 7",
+                [todo_id], (error, users, fields) => {
+                    let users_list = new Set()
+                    users_list.add(users[0].user_id)
+                    if(users[0].owner_id != 0){
+                        users_list.add(users[0].owner_id)
                     }
-                    res.redirect('/admin/view_todos_details/'+todo_id)
+                    
+                    con.query("SELECT assigned_projects.user_id FROM assigned_projects, assigned_todos WHERE assigned_projects.id = assigned_todos.assigned_projects_id AND assigned_todos.assigned_todo = ?",
+                    [todo_id], (error, users2, fields) => {
+                        for(let z = 0; z < users2.length; z++){
+                            
+                            users_list.add(users2[z].user_id)
+                        }
+                    users_list.delete(req.user_id)
+                        users_list.forEach(user => {
+                            con.query("INSERT INTO notifications (title, type, notify_id, user_id) VALUES (?, 'ir', ?, ?)",
+                            [req.body.comment.substring(0, 100), todo_id, user], (err, result1, fields) => {
+                                if (error){
+                                    return con.rollback(function(){
+                                        throw error
+                                    })
+                                }
+                            })
+                        })
+                        con.commit(function(err){
+                            if (err){
+                                return con.rollback(function(){
+                                    throw err
+                                })
+                            }
+                            res.redirect('/admin/view_todos_details/'+todo_id)
+                        })
+                    })
                 })
+                
             }
-            
         })
     })
     
@@ -806,14 +897,44 @@ router.post('/todo_reply', upload.single('issue_file'), verify_route, (req, res)
 router.post('/change_owner', verify_route, verify_role, (req, res) => {
     let todo_id = req.body.todo_id
     let owner_id = req.body.owner
-
-    con.query("UPDATE projects_todo SET owner_id = ? WHERE id = ?", [owner_id, todo_id], (error, results, fields) => {
-        if (error){
-            throw error
-        }else{
-            res.redirect('/admin/view_todos_details/'+todo_id)
-        }
+    con.beginTransaction(function(err){
+        if (err) throw err
+        con.query("UPDATE projects_todo SET owner_id = ? WHERE id = ?", [owner_id, todo_id], (error, results, fields) => {
+            if (error){
+                return con.rollback(() => {
+                    throw error
+                })
+            }else{
+                con.query("SELECT id, todo FROM projects_todo WHERE id = ?", [todo_id],
+                    (error, todo, fields) => {
+                        if(error){
+                            return con.rollback(() => {
+                                throw error
+                            })
+                        }else{
+                            con.query("INSERT INTO notifications (title, type, notify_id, user_id) VALUES (?, 'co', ?, ?)",
+                            [todo[0].todo, todo_id, owner_id], (error, results2, fields) => {
+                                if (error){
+                                    return con.rollback(() => {
+                                        throw error
+                                    })
+                                }
+                                con.commit(function(err){
+                                    if (err){
+                                        return con.rollback(function(){
+                                            throw err
+                                        })
+                                    }
+                                    res.redirect('/admin/view_todos_details/'+todo_id)
+                                })
+                            })
+                        }
+                    })
+                
+            }
+        })
     })
+    
 })
 
 module.exports = router
