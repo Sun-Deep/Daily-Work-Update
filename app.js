@@ -77,6 +77,37 @@ app.set('port', port);
 
 var server = http.createServer(app);
 
+
+// create socket instance with http
+
+var io = require('socket.io')(server)
+
+var users = []
+// add listener for new connection
+io.on("connection", (socket) => {
+  // this is socket for each user
+  console.log("user connected", socket.id)
+
+  // attach incomming listener for new user
+  socket.on("user_connected", (username) => {
+    // save in array
+    users[username] = socket.id
+
+    // socket id will be used to send messages to individual user
+
+    // notify all connected users
+    io.emit("user_connected", username)
+  })  
+
+  // listen from client
+  socket.on("send_message", (data) => {
+    // send event to receiver
+    var socketID = users[data.receiver]
+
+    io.to(socketID).emit("new_message", data)
+  })
+})
+
 /**
  * Listen on provided port, on all network interfaces.
  */

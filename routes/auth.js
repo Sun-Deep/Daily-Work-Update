@@ -948,4 +948,5 @@ router.get('/notification/read/:notify_id/:id', verify_route, (req, res) => {
     })
 })
 
+
 module.exports = router

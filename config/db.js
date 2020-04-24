@@ -7,8 +7,13 @@ var con = mysql.createConnection({
     database: process.env.DB_DATABASE
   })
 
-  con.connect(() => {
-    console.log("Database Connected Successfully")
+  con.connect(err => {
+    if(err){
+      console.log(err.stack)
+      return
+    }
+    console.log("Database connected successfully")
   })
+  
 
   module.exports = con

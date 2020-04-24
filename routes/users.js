@@ -241,4 +241,10 @@ router.get('/notification/read/:notify_id/:id', verify_route, (req, res) => {
         res.redirect('/view_todos_details/'+notify_id)
     })
 })
+
+
+// chat
+router.get('/chat', verify_route, (req, res) => {
+    res.render('user_chat', {layout: "user", notification: notification})
+})
 module.exports = router

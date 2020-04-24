@@ -8,6 +8,8 @@
     
     <link rel="stylesheet" href="/stylesheets/toastr.min.css">
     <script type="text/javascript" src="/javascripts/jquery.min.js"></script>
+    <script type="text/javascript" src="/javascripts/popper.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="/javascripts/main.js"></script>
     <script type="text/javascript" src="/javascripts/toastr.min.js"></script>
 
@@ -15,8 +17,8 @@
         
         body{
             background-color: #404040;
-            color: black;
-            font-family: cursive;
+            color:white;
+            font-family: Arial, Helvetica, sans-serif;
             line-height: 12px;
             margin: 0;
             overflow-x: hidden;
@@ -46,8 +48,34 @@
         .left-main, .right-main{
             color: white;
         }
-
+        .text-inactive{
+            color: rgba(209, 209, 216, 0.63);
+        }
+        .inactive-background{
+            background-color: rgba(209, 209, 216, 0.63);
+        }
+        .chat-box{
+            padding: 10px;
+            color: black;
+            background: white;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        .send-message{
+            margin-top: 15px;
+        }
+        .box-width{
+            clear: both;
+            width: auto;
+            max-width: 400px;
+            text-align: left;
+            line-height: 19px;
+        }
         #main-scroll, #right-scroll{
+            overflow-y: scroll;
+            padding: 10px;
+        }
+        #user-scroll, #chat-scroll{
             overflow-y: scroll;
             padding: 10px;
         }
@@ -136,7 +164,7 @@
 </nav>
 
 <div class="conatiner-fluid">
-    <div class="row">
+    <div class="row p-2">
         {{{body}}}
     </div>
 </div>
