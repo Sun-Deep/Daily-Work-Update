@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 10, 2020 at 01:09 PM
+-- Generation Time: Apr 23, 2020 at 06:23 PM
 -- Server version: 10.4.8-MariaDB
 -- PHP Version: 7.1.33
 
@@ -42,7 +42,11 @@ CREATE TABLE `assigned_projects` (
 INSERT INTO `assigned_projects` (`id`, `user_id`, `designation`, `project_id`) VALUES
 (1, 1, 'Backend Developer - Senior', 1),
 (2, 1, 'Project Leader', 1),
-(3, 4, 'Frontend Developer - Junior', 1);
+(3, 4, 'Frontend Developer - Junior', 1),
+(5, 1, 'Quality Assurance', 1),
+(6, 4, 'Support Engineer', 1),
+(7, 1, 'Project Leader', 3),
+(8, 4, 'Quality Assurance', 3);
 
 -- --------------------------------------------------------
 
@@ -63,7 +67,54 @@ CREATE TABLE `assigned_todos` (
 INSERT INTO `assigned_todos` (`id`, `assigned_projects_id`, `assigned_todo`) VALUES
 (1, 1, 1),
 (2, 2, 2),
-(3, 3, 1);
+(3, 3, 1),
+(5, 5, 7),
+(6, 6, 7),
+(7, 7, 5),
+(8, 7, 6),
+(9, 8, 6);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notifications`
+--
+
+CREATE TABLE `notifications` (
+  `id` int(11) NOT NULL,
+  `title` text NOT NULL,
+  `seen` tinyint(4) NOT NULL DEFAULT 0,
+  `type` varchar(10) NOT NULL,
+  `notify_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `notifications`
+--
+
+INSERT INTO `notifications` (`id`, `title`, `seen`, `type`, `notify_id`, `user_id`) VALUES
+(1, 'Generate Receipts', 0, 'i', 5, 1),
+(2, 'Visit Client office', 0, 'i', 6, 1),
+(3, 'Visit Client office', 1, 'i', 6, 4),
+(4, 'Visit Client office', 0, 'co', 6, 1),
+(5, 'I am commenting this to check for the notification system in issue reply', 1, 'ir', 7, 2),
+(6, 'I am commenting this to check for the notification system in issue reply', 1, 'ir', 7, 4),
+(7, 'This is followback comment', 1, 'ir', 7, 2),
+(8, 'This is followback comment', 1, 'ir', 7, 4),
+(9, 'this is followback comment for notification testing', 1, 'ir', 7, 2),
+(10, 'this is followback comment for notification testing', 0, 'ir', 7, 4),
+(11, 'I think i am doing this write but don\'t know why getting error all the time.', 1, 'ir', 7, 2),
+(12, 'I think i am doing this write but don\'t know why getting error all the time.', 0, 'ir', 7, 4),
+(13, 'mike testing mike testing', 0, 'ir', 7, 2),
+(14, 'mike is not testing', 1, 'ir', 7, 4),
+(15, 'sachai hora', 1, 'ir', 7, 2),
+(16, 'sachai hora', 1, 'ir', 7, 4),
+(17, 'ho ni yaaar', 1, 'ir', 7, 2),
+(18, 'ho ni yaaar', 0, 'ir', 7, 4),
+(19, 'ho ni yaaar', 0, 'ir', 7, 1),
+(20, 'delete this comment bro', 1, 'ir', 7, 4),
+(21, 'delete this comment bro', 0, 'ir', 7, 1);
 
 -- --------------------------------------------------------
 
@@ -103,6 +154,7 @@ CREATE TABLE `projects_todo` (
   `file` text NOT NULL,
   `project_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
+  `owner_id` int(11) NOT NULL DEFAULT 0,
   `status` tinyint(4) NOT NULL DEFAULT 0,
   `date_time` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -111,13 +163,14 @@ CREATE TABLE `projects_todo` (
 -- Dumping data for table `projects_todo`
 --
 
-INSERT INTO `projects_todo` (`id`, `todo`, `description`, `file`, `project_id`, `user_id`, `status`, `date_time`) VALUES
-(1, 'Add project issue', 'Need to design project issue page for multiple issues of project.', '1586278824936-issue.png', 1, 2, 2, '0000-00-00 00:00:00'),
-(2, 'Add comment page', 'Need to add comment page for user and admin to update the issue progress and status.', '1586278824940-comment.png', 1, 2, 1, '0000-00-00 00:00:00'),
-(3, 'Change database design', 'Need to mofidy database for project issues additional features.', '', 1, 2, 0, '0000-00-00 00:00:00'),
-(4, 'Add search issue page', 'Need to design search issue page by various parameters.', '1586278824952-search.png', 1, 2, 0, '0000-00-00 00:00:00'),
-(5, 'Generate Receipts', 'We need to design a page to generate bills.', '', 3, 2, 0, '2020-04-10 15:46:58'),
-(6, 'Visit Client office', 'We need to go the client office for requirements gathering.', '', 3, 2, 0, '2020-04-10 15:46:58');
+INSERT INTO `projects_todo` (`id`, `todo`, `description`, `file`, `project_id`, `user_id`, `owner_id`, `status`, `date_time`) VALUES
+(1, 'Add project issue', 'Need to design project issue page for multiple issues of project.', '1586278824936-issue.png', 1, 2, 0, 2, '0000-00-00 00:00:00'),
+(2, 'Add comment page', 'Need to add comment page for user and admin to update the issue progress and status.', '1586278824940-comment.png', 1, 2, 0, 1, '0000-00-00 00:00:00'),
+(3, 'Change database design', 'Need to mofidy database for project issues additional features.', '', 1, 2, 0, 0, '0000-00-00 00:00:00'),
+(4, 'Add search issue page', 'Need to design search issue page by various parameters.', '1586278824952-search.png', 1, 2, 0, 0, '0000-00-00 00:00:00'),
+(5, 'Generate Receipts', 'We need to design a page to generate bills.', '', 3, 2, 0, 0, '2020-04-10 15:46:58'),
+(6, 'Visit Client office', 'We need to go the client office for requirements gathering.', '', 3, 2, 1, 0, '2020-04-10 15:46:58'),
+(7, 'Unit testing to login module', 'unit testing should be done in login module to test authentication', '', 1, 2, 4, 0, '2020-04-19 13:57:02');
 
 -- --------------------------------------------------------
 
@@ -127,7 +180,7 @@ INSERT INTO `projects_todo` (`id`, `todo`, `description`, `file`, `project_id`, 
 
 CREATE TABLE `project_status` (
   `id` int(11) NOT NULL,
-  `name` varchar(10) NOT NULL
+  `name` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -160,7 +213,14 @@ CREATE TABLE `todo_reply` (
 INSERT INTO `todo_reply` (`id`, `projects_todo_id`, `comment`, `file`, `user_id`, `date_time`) VALUES
 (1, 1, 'this task need more time than assigned.', '1586361393598-issue.png', 2, '2020-04-08 21:41:33'),
 (2, 1, 'This task is solved before the deadline. Now ready for QC team for testing.', '', 2, '2020-04-08 21:45:17'),
-(3, 2, 'This is closed', '', 2, '2020-04-09 18:31:35');
+(3, 2, 'This is closed', '', 2, '2020-04-09 18:31:35'),
+(4, 7, 'I am commenting this to check for the notification system in issue reply', '', 2, '2020-04-22 13:44:52'),
+(6, 7, 'this is followback comment for notification testing', '', 2, '2020-04-22 13:50:54'),
+(7, 7, 'I think i am doing this write but don\'t know why getting error all the time.', '', 2, '2020-04-22 13:54:34'),
+(8, 7, 'mike testing mike testing', '', 2, '2020-04-22 13:58:23'),
+(9, 7, 'sachai hora', '', 2, '2020-04-22 13:59:34'),
+(10, 7, 'ho ni yaaar', '', 2, '2020-04-22 14:00:06'),
+(11, 7, 'delete this comment bro', '', 2, '2020-04-22 14:02:27');
 
 -- --------------------------------------------------------
 
@@ -257,6 +317,12 @@ ALTER TABLE `assigned_todos`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `projects`
 --
 ALTER TABLE `projects`
@@ -307,43 +373,49 @@ ALTER TABLE `user_details`
 -- AUTO_INCREMENT for table `assigned_projects`
 --
 ALTER TABLE `assigned_projects`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `assigned_todos`
 --
 ALTER TABLE `assigned_todos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT for table `notifications`
+--
+ALTER TABLE `notifications`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `projects`
 --
 ALTER TABLE `projects`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `projects_todo`
 --
 ALTER TABLE `projects_todo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `todo_reply`
 --
 ALTER TABLE `todo_reply`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `user_details`
 --
 ALTER TABLE `user_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- Constraints for dumped tables

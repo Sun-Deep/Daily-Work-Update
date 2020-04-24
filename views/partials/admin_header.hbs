@@ -6,7 +6,7 @@
                 <span class="icon-wrapper icon-wrapper-alt rounded-circle">
                     <span class="icon-wrapper-bg bg-danger"></span>
                     <i class="icon text-danger icon-anim-pulse ion-android-notifications"></i>
-                    <i class="fas fa-bell mr-1" style="font-size: 30px;"><span class="{{#if notification.unread 0}} {{else}}red-dot{{/if}}">{{notification.unread}}</span></i>
+                    <i class="fas fa-bell mr-1" style="font-size: 30px;"><span class="{{#if notification.unread 0}} {{else}}red-dot{{/if}}">{{#if notification.unread 0}} {{else}} {{notification.unread}}{{/if}}</span></i>
                 </span>
             </button>
             <div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu-xl rm-pointers dropdown-menu dropdown-menu-right" x-placement="top-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-358px, -2px, 0px);">
@@ -35,7 +35,7 @@
                                                     <div class="vertical-timeline-element-content bounce-in">
                                                         {{#each notification}}
                                                             {{!-- {{#if type 'm'}} --}}
-                                                                <a href="/admin/view_todos_details/{{notify_id}}" class="btn text-left"  onclick="read_status({{id}})">
+                                                                <a href="/admin/notification/read/{{notify_id}}/{{id}}" class="btn text-left">
                                                                     {{#if seen 0}}
                                                                         {{#if type 'ir'}}
                                                                             <strong>New comment on issue #{{notify_id}}: {{title}}</strong>
@@ -94,15 +94,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    function read_status(id){
-        $.ajax({
-            type: 'GET',
-            url: '/notification/read/'+id,
-            success: (data) => {
-
-            }
-        })
-    }
-</script>

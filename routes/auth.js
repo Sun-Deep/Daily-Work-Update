@@ -937,4 +937,15 @@ router.post('/change_owner', verify_route, verify_role, (req, res) => {
     
 })
 
+
+// change notification read status
+router.get('/notification/read/:notify_id/:id', verify_route, (req, res) => {
+    let id = parseInt(req.params.id)
+    let notify_id = parseInt(req.params.notify_id)
+    con.query("UPDATE notifications SET seen = 1 WHERE id = ?", [id], (error, results, fields) => {
+        if (error) throw error
+        res.redirect('/admin/view_todos_details/'+notify_id)
+    })
+})
+
 module.exports = router

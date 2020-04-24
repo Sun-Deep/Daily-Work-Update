@@ -233,11 +233,12 @@ router.post('/view_todos_details/', verify_route, (req, res) => {
 })
 
 // change notification read status
-router.get('/notification/read/:id', verify_route, (req, res) => {
+router.get('/notification/read/:notify_id/:id', verify_route, (req, res) => {
     let id = parseInt(req.params.id)
+    let notify_id = parseInt(req.params.notify_id)
     con.query("UPDATE notifications SET seen = 1 WHERE id = ?", [id], (error, results, fields) => {
         if (error) throw error
-        res.json("success")
+        res.redirect('/view_todos_details/'+notify_id)
     })
 })
 module.exports = router
