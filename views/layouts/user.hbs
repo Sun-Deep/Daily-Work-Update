@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/stylesheets/toastr.min.css">
     <script type="text/javascript" src="/javascripts/jquery.min.js"></script>
     <script type="text/javascript" src="/javascripts/popper.min.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
+    {{!-- <script src="http://localhost:4500/socket.io/socket.io.js"></script> --}}
     <script type="text/javascript" src="/javascripts/main.js"></script>
     <script type="text/javascript" src="/javascripts/toastr.min.js"></script>
 
@@ -61,8 +61,18 @@
             border-radius: 10px;
             display: inline-block;
         }
+        .chat-user, .chat-user:hover{
+            text-decoration: none;
+            color: white;
+        }
         .send-message{
             margin-top: 15px;
+        }
+        .attachment{
+            padding: 9px;
+            background: #969393;
+            margin-right: 8px;
+            border-radius: 4px;
         }
         .box-width{
             clear: both;
@@ -88,10 +98,7 @@
         .search-wrapper .input-holder .search-icon span::after {
             border: 2px solid black;
         }
-        /* .nav-item{
-            margin: 0 15px;
-            font-size: 16px;
-        } */
+       
         .table th, .table td {
             padding: 15px 20px;
         }
@@ -116,6 +123,9 @@
         .nav{
             flex-wrap: nowrap;
         }
+        .dropdown-toggle::after{
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -131,6 +141,9 @@
       
       <li class="nav-item">
         <a class="nav-link" href="/search_todos">Search Project Issues</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/chat">Chat</a>
       </li>
     </ul>
     <div class="app-header__content">

@@ -1,69 +1,41 @@
 <div class="col-4">
     <div id="user-scroll">
-        <div>
-            <h4>Sandeep Pokhrel</h4>
-            <small class="text-inactive">This is the demo message</small>
-        </div>
+        {{#each users}}
+            <a href="/chat/{{id}}" class="chat-user">
+            <div>
+                <h4>{{name}}</h4>
+            </div>
+        </a>
         <hr class="inactive-background">
-        <div>
-            <h4>Ram Jane</h4>
-            <small class="text-inactive">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil, quaerat dolor rem quod perspiciatis nulla voluptatibus ipsam nesciunt sed doloribus consectetur dicta facilis quos. Minima odio quis delectus cumque voluptates!</small>
-        </div>
-        <hr class="inactive-background">
-        <div>
-            <h4>Adolf Hitler</h4>
-            <small>This is the demo message</small>
-        </div>
-        <hr class="inactive-background">
-        <div>
-            <h4>Rahesh Hamal</h4>
-            <small>This is the demo message</small>
-        </div>
-        <hr class="inactive-background">
-        <div>
-            <h4>KP Oli</h4>
-            <small>This is the demo message</small>
-        </div>
-        <hr class="inactive-background">
-        <div>
-            <h4>Donald Trump</h4>
-            <small>This is the demo message</small>
-        </div>
-        <hr class="inactive-background">
-        <div>
-            <h4>Thanos</h4>
-            <small>This is the demo message</small>
-        </div>
-        <hr class="inactive-background">
-        <div>
-            <h4>Gautam Budhha</h4>
-            <small>This is the demo message</small>
-        </div>
-        <hr class="inactive-background">
+        {{/each}}            
     </div>
 </div>
 
 <div class="col-8">
     <div id="chat-scroll">
-        <div class="pull-left box-width">
-            <p class="chat-box">hello from the left side</p>
-        </div>
-        
-        <div class="pull-right box-width">
-            <p class="chat-box">hello from the right side Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repudiandae, eius molestias nulla, repellendus maiores eligendi neque nemo vitae deserunt distinctio deleniti quia illum unde porro quis optio laudantium vero natus. </p>
-        </div>
-        
-        <div class="pull-left box-width">
-            <p class="chat-box">hello from the left side</p>
-        </div>
+        {{#each messages}}
+            {{#if ../sender_id sender}}
+                <div class="pull-right box-width">
+                    <p class="chat-box">{{message}}</p>
+                </div>
+            {{else}}
+                <div class="pull-left box-width">
+                    <p class="chat-box">{{message}}</p>
+                </div>
+            {{/if}}
+        {{/each}}
     </div>
-    <form action="" class="form-inline">
+    {{#if form true}}
+    <form onsubmit="return sendMessage();" class="form-inline" method="POST" id="message-form">
         <div class="position-relative form-group">
-             <input type="text" name="message" id="message" placeholder="Type a message..." class="form-control send-message mr-2" style="width: 810px;">
+             <input type="text" autocomplete="off" autofocus name="message" id="message" placeholder="Type a message..." class="form-control send-message mr-2" style="width: 810px;">
         </div>
+        {{!-- <div class="position-relative form-group">
+             <input type="file" name="attachment" id="attachment" class="form-control-file mt-3 attachment">
+        </div> --}}
        <button type="submit" class="btn btn-outline-secondary mt-3 btn-submit">Send</button>
-      
     </form>
+    {{/if}}
 </div>
 
 
@@ -71,10 +43,83 @@
 
 
 <script type="text/javascript">
+ 
+    let message_count = {{message_count.message_count}}
     
     let deviceHeight1 = window.innerHeight - 78
     let deviceHeight2 = window.innerHeight - 140
     document.getElementById("user-scroll").style.height = deviceHeight1 + "px";
     document.getElementById("chat-scroll").style.height = deviceHeight2 + "px";
+
+    var element = document.getElementById("chat-scroll")
+    element.scrollTo({
+        top: 100,
+        behavior: 'smooth'
+    })
+
+    function sendMessage(){
+        var message = document.getElementById('message').value
+        var sender_id = {{sender_id}}
+        var receiver_id = {{receiver_id}}
+        
+        $.ajax({
+            url: '/chat',
+            type: 'POST',
+            data: {
+                sender: sender_id,
+                receiver: receiver_id,
+                message: message
+            },
+            success: (data) => {
+                load_data(data)
+            }
+        })
+        document.getElementById('message-form').reset()
+        return false
+    }
+
+
+/*
+     setInterval(() => {
+        $.ajax({
+            url: '/get_chat',
+            type: 'POST',
+            data: {
+                message_count: message_count,
+                sender: {{sender_id}},
+                receiver: {{receiver_id}}
+            },
+            success: (data) => {
+                if (data.length > 0){
+                    message_count = data[0].message_count
+                    data.splice(0, 1)
+                    load_data(data, false)
+                }
+                
+            }
+        })
+    }, 10000) 
+
+    */
+
+
+    function load_data(data){
+        var c_chat = ""
+        if (data.length > 0){
+            for (let i = 0; i < data.length; i++){
+                if ({{sender_id}} == data[i].sender){
+                    c_chat = "pull-right"
+                }else{
+                    c_chat = "pull-left"
+                }
+                var html = ''
+                html += '<div class="'+c_chat+' box-width">'
+                html += '<p class="chat-box">'+ data[i].message +'</p>'
+                html += '</div>'
+                document.getElementById("chat-scroll").innerHTML += html
+            }   
+        }
+            
+    }
    
 </script>

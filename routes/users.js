@@ -6,12 +6,6 @@ const con = require('../config/db')
 const bcrypt = require('bcryptjs')
 
 
-// loads admin layout for all
-// router.all("/*", (req, res, next) => {
-//     req.app.locals.layout = "user";
-//         next();
-//   });
-
 router.get('/login', (req, res) => {
     res.render('login', {layout: false})
 })
@@ -45,6 +39,7 @@ router.get('/', verify_route, (req, res) => {
                     }
 
                     res.render('main', {
+                        message_notification: message_notification,
                         notification: notification, 
                         layout: "user",
                         todo: results[0], 
@@ -137,7 +132,7 @@ router.get('/search_todos', verify_route, (req, res) => {
         if (error){
             throw error
         }
-        res.render('user_search_todos', {layout: "user", notification: notification, projects: projects})
+        res.render('user_search_todos', {layout: "user", message_notification: message_notification, notification: notification, projects: projects})
     })
 })
 
@@ -178,7 +173,7 @@ router.get('/view_todos_details/:id', verify_route, (req, res) => {
                                 if (error){
                                     throw error
                                 }else{ 
-                                    res.render('user_view_todo', {layout: "user", notification: notification, todo_info: todo_info[0], user_list: user_list, comments: comments, owner: owner[0]})   
+                                    res.render('user_view_todo', {layout: "user", message_notification: message_notification, notification: notification, todo_info: todo_info[0], user_list: user_list, comments: comments, owner: owner[0]})   
                                 }
                             })
                         }
@@ -219,7 +214,7 @@ router.post('/view_todos_details/', verify_route, (req, res) => {
                                 if (error){
                                     throw error
                                 }else{ 
-                                    res.render('user_view_todo', {layout: "user", notification: notification, todo_info: todo_info[0], user_list: user_list, comments: comments, owner: owner[0]})   
+                                    res.render('user_view_todo', {layout: "user", message_notification: message_notification, notification: notification, todo_info: todo_info[0], user_list: user_list, comments: comments, owner: owner[0]})   
                                 }
                             })
                             
@@ -245,6 +240,138 @@ router.get('/notification/read/:notify_id/:id', verify_route, (req, res) => {
 
 // chat
 router.get('/chat', verify_route, (req, res) => {
-    res.render('user_chat', {layout: "user", notification: notification})
+    con.query("SELECT id, name FROM users WHERE NOT id = ?", [req.user_id],
+    (error, users, fields) => {
+        message_count = {
+            message_count: 0
+        }
+        res.render('user_chat', {layout: "user", users: users, message_notification: message_notification, notification: notification, form: false, receiver_id: 0, sender_id: 0, message_count: message_count})
+    })
 })
+
+router.get('/chat/:id', verify_route, (req, res) => {
+    let receiver_id = req.params.id
+    let sender_id = req.user_id
+    con.query("UPDATE message_notification SET seen = 1 WHERE sender = ? AND receiver = ?", 
+    [receiver_id, req.user_id], (error, results, fields) => {
+        if (error){
+            throw error
+        }else{
+            con.query("SELECT * FROM messages WHERE (sender = ? AND receiver = ?) OR (receiver = ? AND sender = ?)",
+            [sender_id, receiver_id, sender_id, receiver_id], (error, messages, fields) => {
+            if (error){
+                throw error
+            }else{
+                con.query("SELECT COUNT(id) as message_count FROM messages WHERE (sender = ? AND receiver = ?) OR (receiver = ? AND sender = ?)",
+                [sender_id, receiver_id, sender_id, receiver_id], (error, message_count, fields) => {
+                    if (error){
+                        throw error
+                    }else{
+                        con.query("SELECT id, name FROM users WHERE NOT id = ?", [req.user_id],
+                        (error, users, fields) => {
+                            res.render('user_chat', {layout: "user", users: users, message_notification: message_notification, notification: notification, receiver_id: receiver_id, sender_id: sender_id, messages: messages, message_count: message_count[0], form: true})
+                        })
+                        
+                    }
+                })
+            }
+        
+    })
+        }
+    })
+    
+    
+})
+
+router.post('/chat', verify_route, (req, res) => {
+    let sender = req.body.sender
+    let receiver = req.body.receiver
+    let message =  req.body.message
+    con.beginTransaction(function(err){
+        if(err) throw err
+        con.query("INSERT INTO messages (sender, receiver, message) VALUES (?, ?, ?)",
+        [sender, receiver, message], (error, results, filelds) => {
+            if (error){
+                return con.rollback(() => {
+                    throw error
+                })
+            }else{
+                con.query("INSERT INTO message_notification(title, sender, receiver) VALUES (?, ?, ?)",
+                [message, sender, receiver], (error, results2, fields) => {
+                    if (error){
+                        return con.rollback(() => {
+                            throw error
+                        })
+                    }else{
+                        con.commit((err) => {
+                            if (err){
+                                return con.rollback(() => {
+                                    throw error
+                                })
+                            }
+                            con.query("SELECT * FROM messages WHERE sender = ? AND receiver = ? and id = ?",
+                            [sender, receiver, results.insertId], (error, messages, fields) => {
+                                return res.json(messages)
+                            })
+                        })
+                        
+                    }
+                })
+            }
+        })
+    })
+    
+})
+
+
+
+// chat read
+
+router.get('/chat/read/:sender', verify_route, (req, res) => {
+    let sender = parseInt(req.params.sender)
+    con.query("UPDATE message_notification SET seen = 1 WHERE sender = ? AND receiver = ?", 
+    [sender, req.user_id], (error, results, fields) => {
+        if (error){
+            throw error
+        }else{
+            res.redirect('/chat/'+sender)
+        }
+    })
+})
+
+
+
+// router.post('/get_chat', verify_route, (req, res) => {
+//     let sender = req.body.sender
+//     let receiver = req.body.receiver
+//     let message_count = req.body.message_count
+//     con.query("SELECT COUNT(id) as message_count FROM messages WHERE (sender = ? AND receiver = ?) OR (receiver = ? AND sender = ?)",
+//         [sender, receiver, sender, receiver], (error, total_count, fields) => {
+//             if (error){
+//                 throw error
+//             }else{
+//                 console.log(message_count)
+//                 console.log(total_count[0].message_count)
+//                 if(total_count[0].message_count > message_count){
+//                     console.log(total_count[0].message_count)
+//                     con.query("SELECT * FROM messages WHERE (sender = ? AND receiver = ?) OR (receiver = ? AND sender = ?) ORDER BY id DESC LIMIT ?",
+//                     [sender, receiver, sender, receiver,total_count[0].message_count -  message_count], (error, results, fields) => {
+//                         if(results.length > 0){
+//                             results.push({ message_count: total_count[0].message_count})
+//                             console.log(results.reverse())
+//                             return res.send(results)
+//                         }else{
+//                             return
+//                         }
+                        
+//                     })
+//                 }else{
+//                     return
+//                 }
+                
+//             }
+//     })
+// })
+
+
 module.exports = router

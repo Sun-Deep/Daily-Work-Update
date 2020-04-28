@@ -50,7 +50,7 @@ router.get('/', verify_route, verify_role, (req, res) => {
                     throw error
                 }else{
                     const total_projects = Object.keys(projects).length
-                    res.render('dashboard', {notification: notification, total_employee: total_employee, employee: employee, total_projects: total_projects, projects: projects})
+                    res.render('dashboard', {message_notification: message_notification, notification: notification, total_employee: total_employee, employee: employee, total_projects: total_projects, projects: projects})
                 }
             })
         }
@@ -60,7 +60,7 @@ router.get('/', verify_route, verify_role, (req, res) => {
 
 // load signup page
 router.get('/signup', verify_route, verify_role, (req, res) => {
-    res.render('signup', {notification: notification})
+    res.render('signup', {message_notification: message_notification, notification: notification})
 })
 
 
@@ -70,6 +70,7 @@ router.post('/signup', verify_route, verify_role, (req, res) => {
         name: Joi.string().required(),
         email: Joi.string().email().required(),
         designation: Joi.string().required(),
+        skills: Joi.string().required(),
         password: Joi.string().min(5).required(),
         role: Joi.number().required(),
         status: Joi.number().required()
@@ -89,8 +90,8 @@ router.post('/signup', verify_route, verify_role, (req, res) => {
                 const salt = await bcrypt.genSalt(10)
                 const hashPassword = await bcrypt.hash(value.password, salt)
 
-                con.query("INSERT INTO users (NAME, email, designation, password, role, status) VALUES (?, ?, ?, ?, ?, ?)",
-                [value.name, value.email, value.designation, hashPassword, value.role, value.status], (error, result, fields) => {
+                con.query("INSERT INTO users (NAME, email, designation, skills, password, role, status) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                [value.name, value.email, value.designation, value.skills, hashPassword, value.role, value.status], (error, result, fields) => {
                     res.redirect('/admin/view_users')
                 })
             }
@@ -133,8 +134,8 @@ router.post('/logincheck', (req, res) => {
 
 // get the lists of the users
 router.get('/view_users', verify_route, verify_role, (req, res) => {
-    con.query("SELECT id, name, email, designation, role, status FROM users", (error, users, fields) => {
-        res.render('view_users', {notification: notification, users: users})
+    con.query("SELECT id, name, email, designation, skills, role, status FROM users", (error, users, fields) => {
+        res.render('view_users', {message_notification: message_notification, notification: notification, users: users})
     })
     
 })
@@ -142,7 +143,7 @@ router.get('/view_users', verify_route, verify_role, (req, res) => {
 // get details of the user
 router.get('/view_user/details/:id', verify_route, verify_role, (req, res) => {
     var id = req.params.id 
-    con.query("SELECT id, name, email, designation, role, status FROM users where id = ?",[id], (error, user, fields) => {
+    con.query("SELECT id, name, email, designation, skills, role, status FROM users where id = ?",[id], (error, user, fields) => {
         if (error){
             throw error
         }else{
@@ -161,7 +162,7 @@ router.get('/view_user/details/:id', verify_route, verify_role, (req, res) => {
                         if (error){
                             throw error
                         }else{
-                            res.render('view_user_details', {notification: notification, user: user[0], user_details: user_details, projects: projects})
+                            res.render('view_user_details', {message_notification: message_notification, notification: notification, user: user[0], user_details: user_details, projects: projects})
                         }
                     })
                 }
@@ -176,7 +177,8 @@ router.get('/view_user/details/:id', verify_route, verify_role, (req, res) => {
 router.get('/edit/user/:id', verify_route, verify_role, (req, res) => {
     var id = req.params.id
     con.query("SELECT * FROM users WHERE id = ?", [id], (error, user, fields) => {
-        res.render("edit_user", {notification: notification, user: user[0]})
+        
+        res.render("edit_user", {message_notification: message_notification, notification: notification, user: user[0]})
     })
 })
 
@@ -187,6 +189,7 @@ router.post('/edit/user', verify_route, verify_role, (req, res) => {
         name: Joi.string().required(),
         email: Joi.string().email().required(),
         designation: Joi.string().required(),
+        skills: Joi.string().required(),
         role: Joi.number().required(),
         status: Joi.number().required(),
         id: Joi.number().required()
@@ -198,8 +201,8 @@ router.post('/edit/user', verify_route, verify_role, (req, res) => {
         // console.log(error)
         res.redirect('/admin/signup')
     }else{
-                con.query("UPDATE users SET name = ?, email = ?, designation = ?, role = ?, status = ? WHERE id = ?",
-                [value.name, value.email, value.designation, value.role, value.status, value.id], (error, result, fields) => {
+                con.query("UPDATE users SET name = ?, email = ?, designation = ?, skills = ?, role = ?, status = ? WHERE id = ?",
+                [value.name, value.email, value.designation, value.skills, value.role, value.status, value.id], (error, result, fields) => {
                 //    console.log(value)
                     if (error){
                         throw error
@@ -226,7 +229,7 @@ router.get('/inactive/user/:id', verify_route, verify_role, (req, res) => {
 // view inactive users
 router.get('/inactive_users', verify_route, verify_role, (req, res) => {
     con.query("SELECT id, name, email, designation, role, status FROM users WHERE status = 0", (error, users, fields) => {
-        res.render('inactive_users', {notification: notification, users: users})
+        res.render('inactive_users', {message_notification: message_notification, notification: notification, users: users})
     })
 })
 
@@ -245,7 +248,7 @@ router.get('/active/user/:id', verify_route, verify_role, (req, res) => {
 // projects
 // add new projects
 router.get('/add_project', verify_route, verify_role, (req, res) => {
-    res.render('add_project', {notification: notification})
+    res.render('add_project', {message_notification: message_notification, notification: notification})
 })
 
 
@@ -282,7 +285,7 @@ router.get('/project_details', verify_route, verify_role, (req, res) => {
             for(let i = 0; i < Object.keys(project_details).length; i++){
                 project_details[i]['short_details'] = project_details[i]['details'].substring(0, 100) + '...'
             }
-            res.render('project_list', {notification: notification, project_details: project_details})
+            res.render('project_list', {message_notification: message_notification, notification: notification, project_details: project_details})
         }
     })
 
@@ -299,7 +302,7 @@ router.get('/project_details/:id', verify_route, verify_role, (req, res) => {
                 if (error){
                     throw error
                 }else{
-                    res.render('view_project_details', {notification: notification, project: project[0], assigned_users: assigned_users})
+                    res.render('view_project_details', {message_notification: message_notification, notification: notification, project: project[0], assigned_users: assigned_users})
                 }
             })
         }
@@ -312,7 +315,7 @@ router.get('/edit/project_details/:id', verify_route, verify_role, (req, res) =>
         if (error){
             throw error
         }else{
-            res.render('edit_project_details', {notification: notification, project: project[0]})  
+            res.render('edit_project_details', {message_notification: message_notification, notification: notification, project: project[0]})  
         }
     })
     
@@ -353,7 +356,7 @@ router.get('/add_project_todo', verify_route, verify_role, (req, res) => {
         if (error){
             throw error
         }else{
-            res.render('add_project_todo', {notification: notification, projects: projects})
+            res.render('add_project_todo', {message_notification: message_notification, notification: notification, projects: projects})
         }
     })
 })
@@ -375,8 +378,6 @@ let cpUpload = upload.fields([
 router.post('/add_project_todo', cpUpload, verify_route, verify_role, (req, res) =>{
     let project_id = req.body.project
 
-    // console.log(req.body)
-    // console.log(req.files.attachment3 ? true: false)
     con.beginTransaction((err) => {
         if (err){
             throw err
@@ -388,7 +389,7 @@ router.post('/add_project_todo', cpUpload, verify_route, verify_role, (req, res)
                     let todo = req.body["project_todo" + i]
                     let description = req.body["project_description" + i]
                     let file_name = 'attachment' + i
-                    // console.log(req.files[file_name])
+                    
                     let file = req.files[file_name] ? req.files[file_name][0].filename : '' 
                     let user_id = req.user_id
                     var date = new Date()
@@ -454,7 +455,7 @@ router.get('/assign_programmer', verify_route, verify_role, (req, res) => {
                 if (error){
                     throw error
                 }
-                res.render('assign_programmer', {notification: notification, users: users, projects: projects})
+                res.render('assign_programmer', {message_notification: message_notification, notification: notification, users: users, projects: projects})
             })
         }
     })
@@ -558,12 +559,12 @@ router.get('/view_todos/:project_id', verify_route, verify_role, (req, res) => {
             if(Object.keys(todos).length == 0){
                 con.query("SELECT projects_todo.id, projects_todo.todo FROM projects_todo WHERE projects_todo.project_id = ? AND NOT EXISTS (SELECT assigned_todos.assigned_todo FROM assigned_todos WHERE projects_todo.id = assigned_todos.assigned_todo)",
                 [req.params.project_id], (error, todos_not_assigned, fields) => {
-                res.render('view_todos', {notification: notification, todos_not_assigned: todos_not_assigned})
+                res.render('view_todos', {message_notification: message_notification, notification: notification, todos_not_assigned: todos_not_assigned})
                 })
             }else{
                 con.query("SELECT projects_todo.id, projects_todo.todo FROM projects_todo WHERE projects_todo.project_id = ? AND NOT EXISTS (SELECT assigned_todos.assigned_todo FROM assigned_todos WHERE projects_todo.id = assigned_todos.assigned_todo)",
                 [req.params.project_id], (error, todos_not_assigned, fields) => {
-                res.render('view_todos', {notification: notification, todos: todos, project_name: todos[0].project_name, todos_not_assigned: todos_not_assigned})
+                res.render('view_todos', {message_notification: message_notification, notification: notification, todos: todos, project_name: todos[0].project_name, todos_not_assigned: todos_not_assigned})
                 })
             }
             
@@ -676,7 +677,7 @@ router.get('/view_user_todo_done/:user_id', (req, res) => {
 // load view_todos_details page
 router.get('/view_todos_details/:id', verify_route, verify_role, (req, res) => {
     let todo_id = req.params.id
-    console.log(notification)
+ 
     con.query("SELECT projects_todo.id, projects_todo.status, projects_todo.todo, projects_todo.description, projects_todo.file, projects_todo.user_id, DATE_FORMAT(projects_todo.date_time, '%b %d, %Y %a %k:%i:%s') AS date_time, users.name FROM projects_todo JOIN users ON users.id = projects_todo.user_id AND projects_todo.id = ?",
     [todo_id], (error, todo_info, fields) => {
         if (error){
@@ -706,7 +707,7 @@ router.get('/view_todos_details/:id', verify_route, verify_role, (req, res) => {
                                         if(error){
                                             throw error
                                         }else{
-                                            res.render('view_todo_details', {notification: notification, todo_info: todo_info[0], user_list: user_list, comments: comments, owner: owner[0], users: users})
+                                            res.render('view_todo_details', {message_notification: message_notification, notification: notification, todo_info: todo_info[0], user_list: user_list, comments: comments, owner: owner[0], users: users})
                                         }
                                     })
                                 }
@@ -754,7 +755,7 @@ router.post('/view_todos_details/', verify_route, verify_role, (req, res) => {
                                         if(error){
                                             throw error
                                         }else{
-                                            res.render('view_todo_details', {notification: notification, todo_info: todo_info[0], user_list: user_list, comments: comments, owner: owner[0], users: users})
+                                            res.render('view_todo_details', {message_notification: message_notification, notification: notification, todo_info: todo_info[0], user_list: user_list, comments: comments, owner: owner[0], users: users})
                                         }
                                     })
                                     
@@ -775,7 +776,7 @@ router.get('/search_todos', verify_route, verify_role, (req, res) => {
         if (error){
             throw error
         }
-        res.render('search_todos', {notification: notification, projects: projects})
+        res.render('search_todos', {message_notification: message_notification, notification: notification, projects: projects})
     })
 })
 
@@ -947,6 +948,5 @@ router.get('/notification/read/:notify_id/:id', verify_route, (req, res) => {
         res.redirect('/admin/view_todos_details/'+notify_id)
     })
 })
-
 
 module.exports = router

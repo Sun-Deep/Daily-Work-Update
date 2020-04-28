@@ -1,97 +1,51 @@
-<div class="app-header__content">
-    <div class="app-header-right">
-        <div class="header-dots">
-            <div class="dropdown show">
-            <button type="button" aria-haspopup="true" aria-expanded="true" data-toggle="dropdown" class="p-0 mr-2 btn btn-link">
-                <span class="icon-wrapper icon-wrapper-alt rounded-circle">
-                    <span class="icon-wrapper-bg bg-danger"></span>
-                    <i class="icon text-danger icon-anim-pulse ion-android-notifications"></i>
-                    <i class="fas fa-bell mr-1" style="font-size: 30px;"><span class="{{#if notification.unread 0}} {{else}}red-dot{{/if}}">{{#if notification.unread 0}} {{else}} {{notification.unread}}{{/if}}</span></i>
-                    
-                </span>
-            </button>
-            <div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu-xl rm-pointers dropdown-menu dropdown-menu-right" x-placement="top-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-358px, -2px, 0px);">
-                <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
-                    <li class="nav-item">
-                        <a role="tab" class="nav-link active show" data-toggle="tab" href="#tab-messages-header" aria-selected="true">
-                            <span>Notifications</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a role="tab" class="nav-link show" data-toggle="tab" href="#tab-events-header" aria-selected="false">
-                            <span>Messages</span>
-                        </a>
-                    </li>
-                </ul>
-                <div class="tab-content">
-                    <div class="tab-pane active show" id="tab-messages-header" role="tabpanel">
-                        <div class="scroll-area-sm">
-                            <div class="scrollbar-container ps">
-                                <div class="p-3">
-                                    <div class="notifications-box">
-                                        <div class="vertical-time-simple vertical-without-time vertical-timeline vertical-timeline--one-column">
-                                            <div class="vertical-timeline-item dot-danger vertical-timeline-element">
-                                                <div>
-                                                    <span class="vertical-timeline-element-icon bounce-in"></span>
-                                                    <div class="vertical-timeline-element-content bounce-in">
-                                                        {{#each notification}}
-                                                            {{!-- {{#if type 'm'}} --}}
-                                                                <a href="/notification/read/{{notify_id}}/{{id}}" class="btn text-left">
-                                                                    {{#if seen 0}}
-                                                                        {{#if type 'ir'}}
-                                                                            <strong>New comment on issue #{{notify_id}}: {{title}}</strong>
-                                                                        {{/if}}
-                                                                        {{#if type 'co'}}
-                                                                            <strong>You are now owner for issue #{{notify_id}}: {{title}}</strong>
-                                                                        {{/if}}
-                                                                        {{#if type 'i'}}
-                                                                            <strong>You have been assigned to issue #{{notify_id}}: {{title}}</strong>
-                                                                        {{/if}}
-                                                                    {{else}}
-                                                                        {{#if type 'ir'}}
-                                                                            New comment on issue #{{notify_id}}: {{title}}
-                                                                        {{/if}}
-                                                                        {{#if type 'co'}}
-                                                                            You are now owner for issue #{{notify_id}}: {{title}}
-                                                                        {{/if}}
-                                                                        {{#if type 'i'}}
-                                                                            You have been assigned to issue #{{notify_id}}: {{title}}
-                                                                        {{/if}}
-                                                                    {{/if}}
-                                                                </a>
-                                                                <hr>
-                                                            {{!-- {{/if}} --}}
-                                                        {{/each}}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div></div>
-                        </div>
-                    </div>
-                    <div class="tab-pane show" id="tab-events-header" role="tabpanel">
-                        <div class="scroll-area-sm">
-                            <div class="scrollbar-container ps">
-                                <div class="p-3">
-                                    <div class="vertical-without-time vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
-                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                            <div><span class="vertical-timeline-element-icon bounce-in"></span>
-                                                <div class="vertical-timeline-element-content bounce-in">
-                                                    <p></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div></div>
-                        </div>
-                    </div>
-                    
-                </div>
-            </div>
+<div class="btn-group">
+        <button type="button" class="btn dropdown-toggle" style="border:none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-bell mr-1" style="font-size: 30px;"><span class="{{#if notification.unread 0}} {{else}}red-dot{{/if}}">{{#if notification.unread 0}} {{else}} {{notification.unread}}{{/if}}</span></i>
+        </button>
+        <div class="dropdown-menu form-group" style="max-height: 400px; overflow-y: scroll;">
+            {{#each notification}}                                           
+                <a href="/notification/read/{{notify_id}}/{{id}}" class="btn text-left">
+                    {{#if seen 0}}
+                        {{#if type 'ir'}}
+                            <strong style="font-size: 15px;">New comment on issue #{{notify_id}}: {{title}}</strong>
+                        {{/if}}
+                        {{#if type 'co'}}
+                            <strong style="font-size: 15px;">You are now owner for issue #{{notify_id}}: {{title}}</strong>
+                        {{/if}}
+                        {{#if type 'i'}}
+                            <strong style="font-size: 15px;">You have been assigned to issue #{{notify_id}}: {{title}}</strong>
+                        {{/if}}
+                    {{else}}
+                        {{#if type 'ir'}}
+                            New comment on issue #{{notify_id}}: {{title}}
+                        {{/if}}
+                        {{#if type 'co'}}
+                            You are now owner for issue #{{notify_id}}: {{title}}
+                        {{/if}}
+                        {{#if type 'i'}}
+                            You have been assigned to issue #{{notify_id}}: {{title}}
+                        {{/if}}
+                    {{/if}}
+                </a>
+                <hr>                                           
+            {{/each}}
         </div>
+</div>
+
+
+<div class="btn-group">
+        <button type="button" class="btn dropdown-toggle" style="border:none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+           <i class="fas fa-comment-dots mr-1" style="font-size: 30px; color:black;"><span class="{{#if message_notification.unread 0}} {{else}}red-dot{{/if}}">{{#if message_notification.unread 0}} {{else}} {{message_notification.unread}}{{/if}}</span></i>
+        </button>
+        <div class="dropdown-menu form-group" style="max-height: 400px; overflow-y: scroll;">
+            {{#each message_notification}}
+                <a href="/chat/read/{{sender}}" class="btn text-left text-dark">
+                    <strong style="font-size: 15px;">
+                        <span>{{name}}:</span><br>
+                        <small>{{title}}</small>
+                    </strong>
+                </a>
+                <hr>
+            {{/each}}
         </div>
     </div>
-</div>

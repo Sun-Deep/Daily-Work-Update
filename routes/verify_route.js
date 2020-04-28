@@ -23,7 +23,13 @@ module.exports = function(req, res, next) {
                 } 
             }
             global.notification.unread = unread
-            next()
+            con.query("SELECT mn.id, mn.title, mn.sender, mn.receiver, u.name FROM message_notification mn, users u WHERE u.id = mn.sender AND mn.receiver = ? AND mn.seen = 0 GROUP BY mn.sender",
+            [req.user_id], (error, results2, fields) => {
+                global.message_notification = results2
+                global.message_notification.unread = results2.length
+                next()
+            })
+            
         })
         
     }catch(err){
