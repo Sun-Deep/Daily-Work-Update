@@ -5,7 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var exhbs = require('express-handlebars')
 require('dotenv').config()
-const con = require('./config/db')
+
 
 var app = express();
 
@@ -15,9 +15,6 @@ var hbs = exhbs.create({
   helpers: {
     if: function(arg1, arg2, options){
       return (arg1 == arg2) ? options.fn(this) : options.inverse(this)
-    },
-    user_id: function(){
-      return user_id
     }
   }
 })
@@ -80,27 +77,6 @@ app.set('port', port);
 
 var server = http.createServer(app);
 
-// create socket instance with http
-// var io = require('socket.io')(server)
-
-// var users = {}
-
-// // add listener for new connection
-// io.on("connection", (socket) => {
- 
-//   // this is socket for each user
-//   // console.log("user connected", socket.id)
-//   // attach incomming listener for new user
-//   socket.on("user_connected", (sender_id) => {
-//     users[sender_id] = socket.id
-//   })  
-
-//   // listen from client
-//   socket.on("message", (data) => {
-//     console.log(users)
-//     con.query("INSERT INTO message()")
-//   })
-// })
 
 /**
  * Listen on provided port, on all network interfaces.

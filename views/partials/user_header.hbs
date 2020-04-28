@@ -4,7 +4,7 @@
         </button>
         <div class="dropdown-menu form-group" style="max-height: 400px; overflow-y: scroll;">
             {{#each notification}}                                           
-                <a href="/notification/read/{{notify_id}}/{{id}}" class="btn text-left">
+                <a href="{{#if ../notification.user_role 0}}/admin/notification/read/{{notify_id}}/{{id}} {{else}}/notification/read/{{notify_id}}/{{id}} {{/if}}" class="btn text-left">
                     {{#if seen 0}}
                         {{#if type 'ir'}}
                             <strong style="font-size: 15px;">New comment on issue #{{notify_id}}: {{title}}</strong>

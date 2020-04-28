@@ -13,6 +13,7 @@ module.exports = function(req, res, next) {
         req.user_name = verified.name
         req.user_id = verified.id
         req.user_role = verified.role
+    
         con.query("SELECT * FROM notifications WHERE user_id = ? ORDER BY id DESC",
         [req.user_id], (error, results, fields) => {
             global.notification = results
@@ -22,6 +23,7 @@ module.exports = function(req, res, next) {
                     unread += 1
                 } 
             }
+            global.notification.user_role = verified.role
             global.notification.unread = unread
             con.query("SELECT mn.id, mn.title, mn.sender, mn.receiver, u.name FROM message_notification mn, users u WHERE u.id = mn.sender AND mn.receiver = ? AND mn.seen = 0 GROUP BY mn.sender",
             [req.user_id], (error, results2, fields) => {

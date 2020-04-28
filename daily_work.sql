@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 23, 2020 at 06:23 PM
+-- Generation Time: Apr 28, 2020 at 11:22 AM
 -- Server version: 10.4.8-MariaDB
 -- PHP Version: 7.1.33
 
@@ -77,6 +77,95 @@ INSERT INTO `assigned_todos` (`id`, `assigned_projects_id`, `assigned_todo`) VAL
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `messages`
+--
+
+CREATE TABLE `messages` (
+  `id` int(11) NOT NULL,
+  `sender` int(11) NOT NULL,
+  `receiver` int(11) NOT NULL,
+  `message` text NOT NULL,
+  `file` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `messages`
+--
+
+INSERT INTO `messages` (`id`, `sender`, `receiver`, `message`, `file`) VALUES
+(1, 4, 1, 'hello brother', NULL),
+(2, 4, 1, 'K xa halkhabar', NULL),
+(3, 1, 4, 'Hi man, mero thik xa ni, timro k xa ?', NULL),
+(4, 4, 1, 'mero ni badiya xa. K gardai ho ta ?', NULL),
+(5, 4, 1, 'sunan na, euta kura sodhna thyo!', NULL),
+(6, 1, 4, 'vanana bro', NULL),
+(7, 4, 1, 'nodejs ko application deploy garna aauxa timlai ?', NULL),
+(8, 4, 2, 'Hello annata sir', NULL),
+(9, 2, 4, 'Hello susan', NULL),
+(10, 4, 2, 'Sir, I want to do some project, do you have any idea ?', NULL),
+(11, 2, 4, 'Yes, I do. ', NULL),
+(12, 4, 2, 'Can you please give me some idea about it?', NULL),
+(13, 2, 4, 'What about working on blood donation application ?', NULL),
+(14, 4, 2, 'Sounds cool, Can you give me the details ?', NULL),
+(15, 2, 4, 'Yes, email me with proper header.', NULL),
+(16, 4, 2, 'Okay sir', NULL),
+(17, 2, 4, 'Cool', NULL),
+(18, 4, 2, 'Email already sent to you', NULL),
+(19, 2, 4, 'Okay, I will check it', NULL),
+(20, 4, 2, 'Do it fast', NULL),
+(21, 4, 2, 'I am waiting sir', NULL),
+(22, 2, 4, 'I already replied to you', NULL),
+(23, 2, 4, 'check email', NULL),
+(24, 4, 2, 'Got it. Thank you', NULL),
+(27, 4, 2, 'Hello ', NULL),
+(28, 4, 2, 'Hello sir', NULL),
+(29, 2, 4, 'Yes', NULL),
+(30, 4, 2, 'K xa khabar', NULL),
+(31, 4, 2, 'thikai xa', NULL),
+(32, 2, 1, 'Hello tilak', NULL),
+(33, 2, 1, 'How are you ?', NULL),
+(34, 2, 4, 'K xa susan halkhabar ?', NULL),
+(35, 4, 2, 'thikai xa ', NULL),
+(36, 4, 2, 'sir', NULL),
+(37, 4, 2, 'Hajur k gardai hunuhunxa ?', NULL),
+(38, 4, 2, 'k xa oi', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `message_notification`
+--
+
+CREATE TABLE `message_notification` (
+  `id` int(11) NOT NULL,
+  `title` text NOT NULL,
+  `sender` int(11) NOT NULL,
+  `receiver` int(11) NOT NULL,
+  `seen` tinyint(4) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `message_notification`
+--
+
+INSERT INTO `message_notification` (`id`, `title`, `sender`, `receiver`, `seen`) VALUES
+(1, 'Hello sir', 4, 2, 1),
+(2, 'Yes', 2, 4, 1),
+(3, 'K xa khabar', 4, 2, 1),
+(4, 'thikai xa', 4, 2, 1),
+(5, 'aru k hudai xa', 2, 4, 1),
+(6, 'Hello susan bro', 1, 4, 1),
+(7, 'Hello tilak', 2, 1, 0),
+(8, 'How are you ?', 2, 1, 0),
+(9, 'K xa susan halkhabar ?', 2, 4, 1),
+(10, 'thikai xa ', 4, 2, 1),
+(11, 'sir', 4, 2, 1),
+(12, 'Hajur k gardai hunuhunxa ?', 4, 2, 1),
+(13, 'k xa oi', 4, 2, 1);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `notifications`
 --
 
@@ -103,18 +192,20 @@ INSERT INTO `notifications` (`id`, `title`, `seen`, `type`, `notify_id`, `user_i
 (7, 'This is followback comment', 1, 'ir', 7, 2),
 (8, 'This is followback comment', 1, 'ir', 7, 4),
 (9, 'this is followback comment for notification testing', 1, 'ir', 7, 2),
-(10, 'this is followback comment for notification testing', 0, 'ir', 7, 4),
+(10, 'this is followback comment for notification testing', 1, 'ir', 7, 4),
 (11, 'I think i am doing this write but don\'t know why getting error all the time.', 1, 'ir', 7, 2),
-(12, 'I think i am doing this write but don\'t know why getting error all the time.', 0, 'ir', 7, 4),
-(13, 'mike testing mike testing', 0, 'ir', 7, 2),
+(12, 'I think i am doing this write but don\'t know why getting error all the time.', 1, 'ir', 7, 4),
+(13, 'mike testing mike testing', 1, 'ir', 7, 2),
 (14, 'mike is not testing', 1, 'ir', 7, 4),
 (15, 'sachai hora', 1, 'ir', 7, 2),
 (16, 'sachai hora', 1, 'ir', 7, 4),
 (17, 'ho ni yaaar', 1, 'ir', 7, 2),
-(18, 'ho ni yaaar', 0, 'ir', 7, 4),
+(18, 'ho ni yaaar', 1, 'ir', 7, 4),
 (19, 'ho ni yaaar', 0, 'ir', 7, 1),
 (20, 'delete this comment bro', 1, 'ir', 7, 4),
-(21, 'delete this comment bro', 0, 'ir', 7, 1);
+(21, 'delete this comment bro', 0, 'ir', 7, 1),
+(22, 'ma ferri aaye', 1, 'ir', 7, 4),
+(23, 'ma ferri aaye', 0, 'ir', 7, 1);
 
 -- --------------------------------------------------------
 
@@ -220,7 +311,8 @@ INSERT INTO `todo_reply` (`id`, `projects_todo_id`, `comment`, `file`, `user_id`
 (8, 7, 'mike testing mike testing', '', 2, '2020-04-22 13:58:23'),
 (9, 7, 'sachai hora', '', 2, '2020-04-22 13:59:34'),
 (10, 7, 'ho ni yaaar', '', 2, '2020-04-22 14:00:06'),
-(11, 7, 'delete this comment bro', '', 2, '2020-04-22 14:02:27');
+(11, 7, 'delete this comment bro', '', 2, '2020-04-22 14:02:27'),
+(12, 7, 'ma ferri aaye', '', 2, '2020-04-23 22:20:03');
 
 -- --------------------------------------------------------
 
@@ -253,6 +345,7 @@ CREATE TABLE `users` (
   `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `designation` varchar(255) NOT NULL,
+  `skills` text NOT NULL,
   `password` text NOT NULL,
   `role` tinyint(4) NOT NULL DEFAULT 1,
   `status` tinyint(4) NOT NULL DEFAULT 1
@@ -262,11 +355,12 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `designation`, `password`, `role`, `status`) VALUES
-(1, 'Tilak Poudel', 'poudell.tilakk@gmail.com', 'Laravel Developer', '$2a$10$LucVjtyYpwrRN2EQuRL6VutS.OBPnRnTCcaSK7C2XGHyp2NmbS.6C', 1, 1),
-(2, 'Ananta Pandey', 'alwaysananta@gmail.com', 'Supervisor', '$2a$10$yS7bcOMMm/xMVjG6f3kdje9hXO7DQBV1r3aN9m/ojScNawVwAcXl2', 0, 1),
-(3, 'Sagar Gharti', 'sagarchhetri981@gmail.com', 'NodeJs Developer', '$2a$10$s/k0orFsS9IoQJYP4TMQh.84D8C0TquQ9uIBqip1UODcPCyLiLNJm', 1, 0),
-(4, 'Susan Neupane', 'susaneupane@gmail.com', 'Web Developer', '$2a$10$X8CEBVDhG9PveY6KrEK.fOOy5evG5olqQc9CByzQIsbchuF1WdZq.', 1, 1);
+INSERT INTO `users` (`id`, `name`, `email`, `designation`, `skills`, `password`, `role`, `status`) VALUES
+(1, 'Tilak Poudel', 'poudell.tilakk@gmail.com', 'Laravel Developer', '', '$2a$10$LucVjtyYpwrRN2EQuRL6VutS.OBPnRnTCcaSK7C2XGHyp2NmbS.6C', 1, 1),
+(2, 'Ananta Pandey', 'alwaysananta@gmail.com', 'Supervisor', '', '$2a$10$yS7bcOMMm/xMVjG6f3kdje9hXO7DQBV1r3aN9m/ojScNawVwAcXl2', 0, 1),
+(3, 'Sagar Gharti', 'sagarchhetri981@gmail.com', 'NodeJs Developer', '', '$2a$10$s/k0orFsS9IoQJYP4TMQh.84D8C0TquQ9uIBqip1UODcPCyLiLNJm', 1, 0),
+(4, 'Susan Neupane', 'susaneupane@gmail.com', 'Web Developer', '', '$2a$10$X8CEBVDhG9PveY6KrEK.fOOy5evG5olqQc9CByzQIsbchuF1WdZq.', 1, 1),
+(5, 'Radhika Pokhrel', 'radhika@gmail.com', 'Intern', 'php, laravel https://www.essentialsql.com/get-ready-to-learn-sqlserver-18-how-to-use-the-except-operator/', '$2a$10$r3.ktJNzfj95Vt3fNItLtuvTjgK36FVOqhjMULcwsdt41iSrddWpm', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -314,6 +408,18 @@ ALTER TABLE `assigned_projects`
 -- Indexes for table `assigned_todos`
 --
 ALTER TABLE `assigned_todos`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `messages`
+--
+ALTER TABLE `messages`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `message_notification`
+--
+ALTER TABLE `message_notification`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -382,10 +488,22 @@ ALTER TABLE `assigned_todos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
+-- AUTO_INCREMENT for table `messages`
+--
+ALTER TABLE `messages`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+
+--
+-- AUTO_INCREMENT for table `message_notification`
+--
+ALTER TABLE `message_notification`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+
+--
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `projects`
@@ -403,13 +521,13 @@ ALTER TABLE `projects_todo`
 -- AUTO_INCREMENT for table `todo_reply`
 --
 ALTER TABLE `todo_reply`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `user_details`
