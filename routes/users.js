@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const Joi = require('@hapi/joi')
-const verify_route = require('./verify_route')
+const verify_route = require('../middlewares/verify_route')
 const con = require('../config/db')
 const bcrypt = require('bcryptjs')
 

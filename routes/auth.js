@@ -3,9 +3,10 @@ const Joi = require('@hapi/joi')
 const con = require('../config/db')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const verify_route = require('./verify_route')
-const verify_role = require('./verify_role')
+const verify_route = require('../middlewares/verify_route')
+const verify_role = require('../middlewares/verify_role')
 const multer = require('multer')
+const send_mail = require('../middlewares/email')
 
 
 // for file storage
@@ -297,7 +298,7 @@ router.get('/project_details/:id', verify_route, verify_role, (req, res) => {
         if (error){
             throw error
         }else{
-            con.query("SELECT users.name, assigned_projects.designation FROM users, assigned_projects WHERE assigned_projects.project_id = ? AND assigned_projects.user_id = users.id",
+            con.query("SELECT users.name FROM users, assigned_projects WHERE assigned_projects.project_id = ? AND assigned_projects.user_id = users.id",
             [req.params.id], (error, assigned_users, fields) => {
                 if (error){
                     throw error
@@ -467,8 +468,8 @@ router.post('/assign_programmer', verify_route, verify_role, (req, res) => {
         if (err){
             throw err
         }else{
-            con.query("INSERT INTO assigned_projects (user_id, designation, project_id) VALUES (?, ?, ?)",
-            [req.body.programmer, req.body.designation, req.body.project], (error, results, fields) => {
+            con.query("INSERT INTO assigned_projects (user_id, project_id) VALUES (?, ?, ?)",
+            [req.body.programmer, req.body.project], (error, results, fields) => {
                 if (error){
                     return con.rollback(() => {
                         throw error
@@ -486,7 +487,7 @@ router.post('/assign_programmer', verify_route, verify_role, (req, res) => {
                                     throw error
                                 })
                             }else{
-                                con.query("SELECT id, todo FROM projects_todo WHERE id = ?", [project_todo[i]],
+                                con.query("SELECT projects_todo.id, projects_todo.todo, users.email FROM projects_todo, users WHERE projects_todo.id = ? AND users.id = ?", [project_todo[i], req.body.programmer],
                                 (error, todo, fields) => {
                                     if(error){
                                         return con.rollback(() => {
@@ -500,6 +501,12 @@ router.post('/assign_programmer', verify_route, verify_role, (req, res) => {
                                                     throw error
                                                 })
                                             }
+                                            let data = {
+                                                subject: "From DailyWork ERP",
+                                                email: todo[0].email,
+                                                body: "You have new email in DailyWork ERP",
+                                            }
+                                            send_mail(data)
                                         })
                                     }
                                 })
@@ -515,7 +522,7 @@ router.post('/assign_programmer', verify_route, verify_role, (req, res) => {
                                 throw error
                             })
                         }else{
-                            con.query("SELECT id, todo FROM projects_todo WHERE id = ?", [project_todo],
+                            con.query("SELECT projects_todo.id, projects_todo.todo, users.email FROM projects_todo, users WHERE projects_todo.id = ? AND users.id = ?", [project_todo, req.body.programmer],
                             (error, todo, fields) => {
                                 if(error){
                                     return con.rollback(() => {
@@ -529,6 +536,12 @@ router.post('/assign_programmer', verify_route, verify_role, (req, res) => {
                                                 throw error
                                             })
                                         }
+                                        let data = {
+                                            subject: "From DailyWork ERP",
+                                            email: todo[0].email,
+                                            body: "You have new email in DailyWork ERP",
+                                        }
+                                        send_mail(data)
                                     })
                                 }
                             })
@@ -550,7 +563,7 @@ router.post('/assign_programmer', verify_route, verify_role, (req, res) => {
 
 // view all todos
 router.get('/view_todos/:project_id', verify_route, verify_role, (req, res) => {
-    con.query("SELECT projects_todo.project_id AS project_id, projects_todo.id AS projects_todo_id, assigned_projects.id AS assigned_projects_id, assigned_todos.id AS assigned_todos_id, projects_todo.id, projects_todo.todo, projects_todo.status, assigned_projects.designation, users.name, projects.name as project_name FROM assigned_projects JOIN assigned_todos ON  assigned_todos.assigned_projects_id = assigned_projects.id AND assigned_projects.project_id = ? JOIN projects_todo ON assigned_todos.assigned_todo = projects_todo.id JOIN users ON users.id = assigned_projects.user_id JOIN projects ON projects.id = assigned_projects.project_id ORDER BY users.name ASC", 
+    con.query("SELECT projects_todo.project_id AS project_id, projects_todo.id AS projects_todo_id, assigned_projects.id AS assigned_projects_id, assigned_todos.id AS assigned_todos_id, projects_todo.id, projects_todo.todo, projects_todo.status, users.name, projects.name as project_name FROM assigned_projects JOIN assigned_todos ON  assigned_todos.assigned_projects_id = assigned_projects.id AND assigned_projects.project_id = ? JOIN projects_todo ON assigned_todos.assigned_todo = projects_todo.id JOIN users ON users.id = assigned_projects.user_id JOIN projects ON projects.id = assigned_projects.project_id ORDER BY users.name ASC", 
     [req.params.project_id], (error, todos, fields) => {
         if(error){
             throw error
@@ -677,7 +690,6 @@ router.get('/view_user_todo_done/:user_id', (req, res) => {
 // load view_todos_details page
 router.get('/view_todos_details/:id', verify_route, verify_role, (req, res) => {
     let todo_id = req.params.id
- 
     con.query("SELECT projects_todo.id, projects_todo.status, projects_todo.todo, projects_todo.description, projects_todo.file, projects_todo.user_id, DATE_FORMAT(projects_todo.date_time, '%b %d, %Y %a %k:%i:%s') AS date_time, users.name FROM projects_todo JOIN users ON users.id = projects_todo.user_id AND projects_todo.id = ?",
     [todo_id], (error, todo_info, fields) => {
         if (error){
@@ -837,6 +849,16 @@ router.post('/todo_reply', upload.single('issue_file'), verify_route, (req, res)
                                     throw error
                                 })
                             }
+                            con.query("SELECT email FROM users WHERE id = ?", [user], (error, email, fields) => {
+                                
+                                let data = {
+                                    subject: "From DailyWork ERP",
+                                    email: email[0].email,
+                                    body: "You have new email in DailyWork ERP",
+                                }
+                                send_mail(data)
+                            })
+                            
                         })
                     })
                     con.commit(function(err){
@@ -875,6 +897,15 @@ router.post('/todo_reply', upload.single('issue_file'), verify_route, (req, res)
                                         throw error
                                     })
                                 }
+                                con.query("SELECT email FROM users WHERE id = ?", [user], (error, email, fields) => {
+                                    let data = {
+                                        subject: "From DailyWork ERP",
+                                        email: email[0].email,
+                                        body: "You have new email in DailyWork ERP",
+                                    }
+                                    send_mail(data)
+                                })
+                                
                             })
                         })
                         con.commit(function(err){
@@ -906,7 +937,7 @@ router.post('/change_owner', verify_route, verify_role, (req, res) => {
                     throw error
                 })
             }else{
-                con.query("SELECT id, todo FROM projects_todo WHERE id = ?", [todo_id],
+                con.query("SELECT projects_todo.id, projects_todo.todo, users.email FROM projects_todo, users WHERE projects_todo.id = ? AND users.id = ?", [todo_id, owner_id],
                     (error, todo, fields) => {
                         if(error){
                             return con.rollback(() => {
@@ -920,6 +951,12 @@ router.post('/change_owner', verify_route, verify_role, (req, res) => {
                                         throw error
                                     })
                                 }
+                                let data = {
+                                    subject: "From DailyWork ERP",
+                                    email: todo[0].email,
+                                    body: "You have new email in DailyWork ERP",
+                                }
+                                send_mail(data)
                                 con.commit(function(err){
                                     if (err){
                                         return con.rollback(function(){

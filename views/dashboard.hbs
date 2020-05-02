@@ -95,7 +95,7 @@
                     type: 'GET',
                     url: '/admin/view_user_todos/'+ user_id,
                     success: (todos) => {
-                        if (todo_done.length > 0){
+                        if (todo_done.length > 0 || todos.length){
                             let result = ''
                             let button = ''
                             let title = 'User Todo List'
@@ -109,7 +109,6 @@
                             } 
                             result += '<h5>Assigned Todo List</h5>'
                             for (i = 0; i < todos.length; i++){
-                               
                                 if(todos[i].status == 0){
                                     button = '<button class="btn btn-outline-info btn-sm ml-3">open</button>'
                                 }else if (todos[i].status == 2){
