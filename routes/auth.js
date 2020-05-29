@@ -357,7 +357,10 @@ router.get('/add_project_todo', verify_route, verify_role, (req, res) => {
         if (error){
             throw error
         }else{
-            res.render('add_project_todo', {message_notification: message_notification, notification: notification, projects: projects})
+            con.query("SELECT id, name FROM users", (error, users, fields) => {
+                if(error) throw error
+                res.render('add_project_todo', {message_notification: message_notification, notification: notification, projects: projects, users: users})  
+            })
         }
     })
 })
@@ -373,7 +376,17 @@ let cpUpload = upload.fields([
     {name:'attachment8'},
     {name:'attachment9'},
     {name:'attachment10'},
-    {name:'attachment11'}
+    {name:'attachment11'},
+    {name:'attachment12'},
+    {name:'attachment13'},
+    {name:'attachment14'},
+    {name:'attachment15'},
+    {name:'attachment16'},
+    {name:'attachment17'},
+    {name:'attachment18'},
+    {name:'attachment19'},
+    {name:'attachment20'},
+
 ])
 // add project todos
 router.post('/add_project_todo', cpUpload, verify_route, verify_role, (req, res) =>{
@@ -383,29 +396,114 @@ router.post('/add_project_todo', cpUpload, verify_route, verify_role, (req, res)
         if (err){
             throw err
         }else{
-            for(let i = 1; i <= (Object.keys(req.body).length - 1) / 2; i++){
+            count_loop = 0
+            Object.keys(req.body).forEach((k) => {
+                if(k.startsWith("project_")){
+                    count_loop += 1
+                }
+            })
+            console.log(Object.keys(req.body))
+            for(let i = 1; i <= count_loop / 2; i++){
+                console.log("total loop: ", count_loop)
                 if (i == 0){
                     continue
                 }else{
                     let todo = req.body["project_todo" + i]
                     let description = req.body["project_description" + i]
                     let file_name = 'attachment' + i
-                    
                     let file = req.files[file_name] ? req.files[file_name][0].filename : '' 
                     let user_id = req.user_id
+                    let assign_user = req.body["user" + i] ? req.body["user" + i] : ''
                     var date = new Date()
                     var formattedDate = date.getFullYear() +"-"+ (date.getMonth() + 1) +"-" + date.getDate() +" "+ date.getHours() +":"+ date.getMinutes()+":"+date.getSeconds()
 
                     if(todo.length == 0 || description.length == 0){
                         continue
                     }else{  
-                        
                         con.query("INSERT INTO projects_todo (todo, description, file, project_id, user_id, owner_id, date_time) VALUES (?, ?, ?, ?, ?, ?, ?)",
                         [todo, description, file, project_id, user_id, user_id, formattedDate], (error, results, fields) => {
                                 if(error){
                                     return con.rollback(() => {
                                         throw error
                                     })
+                                }else{
+                                    if(assign_user != ''){
+                                        if(typeof(assign_user) == 'object'){
+                                            for(let j = 0; j < assign_user.length; j++){
+                                                con.query("INSERT INTO assigned_projects (user_id, project_id) VALUES (?, ?)",
+                                                [assign_user[j], project_id], (error, assign_project, fields) => {
+                                                if (error){
+                                                    return con.rollback(() => {
+                                                        throw error
+                                                    })
+                                                }else{
+                                                    con.query("INSERT INTO assigned_todos (assigned_projects_id, assigned_todo) VALUES (?, ?)",
+                                                    [assign_project.insertId, results.insertId], (error, results1, fields) => {
+                                                        if(error){
+                                                            return con.rollback(() => {
+                                                                throw error
+                                                            })
+                                                        }
+                                                        con.query("INSERT INTO notifications (title, type, notify_id, user_id) VALUES (?, 'i', ?, ?)",
+                                                        [todo, results.insertId, assign_user[j]], (error, results2, fields) => {
+                                                            if (error){
+                                                                return con.rollback(() => {
+                                                                    throw error
+                                                                })
+                                                            }
+                                                            con.query("SELECT email FROM users WHERE id = ?", [assign_user[j]], (error, email, fields) => {
+                                                                if (error) throw error
+                                                                let data = {
+                                                                    subject: "From DailyWork ERP",
+                                                                    email: email[0].email,
+                                                                    body: "You have new email in DailyWork ERP",
+                                                                }
+                                                                send_mail(data)
+                                                            })
+                                                        })
+                                                    })
+                                                }
+                                                })
+                                            }
+                                            
+                                        }else if (typeof(assign_user) == 'string'){
+                                            con.query("INSERT INTO assigned_projects (user_id, project_id) VALUES (?, ?)",
+                                                [assign_user, project_id], (error, assign_project, fields) => {
+                                                if (error){
+                                                    return con.rollback(() => {
+                                                        throw error
+                                                    })
+                                                }else{
+                                                    con.query("INSERT INTO assigned_todos (assigned_projects_id, assigned_todo) VALUES (?, ?)",
+                                                    [assign_project.insertId, results.insertId], (error, results1, fields) => {
+                                                        if(error){
+                                                            return con.rollback(() => {
+                                                                throw error
+                                                            })
+                                                        }
+                                                        con.query("INSERT INTO notifications (title, type, notify_id, user_id) VALUES (?, 'i', ?, ?)",
+                                                        [todo, results.insertId, assign_user], (error, results2, fields) => {
+                                                            if (error){
+                                                                return con.rollback(() => {
+                                                                    throw error
+                                                                })
+                                                            }
+                                                            con.query("SELECT email FROM users WHERE id = ?", [assign_user], (error, email, fields) => {
+                                                                if (error) throw error
+                                                                let data = {
+                                                                    subject: "From DailyWork ERP",
+                                                                    email: email[0].email,
+                                                                    body: "You have new email in DailyWork ERP",
+                                                                }
+                                                                send_mail(data)
+                                                            })
+                                                        })
+                                                    })
+                                                }
+                                            })
+                                        }
+                                    }
+                                    
                                 }
                         })
                     }
@@ -468,16 +566,15 @@ router.post('/assign_programmer', verify_route, verify_role, (req, res) => {
         if (err){
             throw err
         }else{
-            con.query("INSERT INTO assigned_projects (user_id, project_id) VALUES (?, ?, ?)",
+            con.query("INSERT INTO assigned_projects (user_id, project_id) VALUES (?, ?)",
             [req.body.programmer, req.body.project], (error, results, fields) => {
                 if (error){
                     return con.rollback(() => {
                         throw error
                     })
                 }
-                // console.log(results)
+                
                 let project_todo = req.body.project_todo
-                // console.log(typeof(project_todo))
                 if (typeof(project_todo) == "object"){
                     for(let i = 0; i < project_todo.length; i++){
                         con.query("INSERT INTO assigned_todos (assigned_projects_id, assigned_todo) VALUES (?, ?)",
@@ -570,12 +667,12 @@ router.get('/view_todos/:project_id', verify_route, verify_role, (req, res) => {
         }else{
             // console.log(todos)
             if(Object.keys(todos).length == 0){
-                con.query("SELECT projects_todo.id, projects_todo.todo FROM projects_todo WHERE projects_todo.project_id = ? AND NOT EXISTS (SELECT assigned_todos.assigned_todo FROM assigned_todos WHERE projects_todo.id = assigned_todos.assigned_todo)",
+                con.query("SELECT projects_todo.id, projects_todo.status, projects_todo.todo FROM projects_todo WHERE projects_todo.project_id = ? AND NOT EXISTS (SELECT assigned_todos.assigned_todo FROM assigned_todos WHERE projects_todo.id = assigned_todos.assigned_todo)",
                 [req.params.project_id], (error, todos_not_assigned, fields) => {
                 res.render('view_todos', {message_notification: message_notification, notification: notification, todos_not_assigned: todos_not_assigned})
                 })
             }else{
-                con.query("SELECT projects_todo.id, projects_todo.todo FROM projects_todo WHERE projects_todo.project_id = ? AND NOT EXISTS (SELECT assigned_todos.assigned_todo FROM assigned_todos WHERE projects_todo.id = assigned_todos.assigned_todo)",
+                con.query("SELECT projects_todo.id, projects_todo.status, projects_todo.todo FROM projects_todo WHERE projects_todo.project_id = ? AND NOT EXISTS (SELECT assigned_todos.assigned_todo FROM assigned_todos WHERE projects_todo.id = assigned_todos.assigned_todo)",
                 [req.params.project_id], (error, todos_not_assigned, fields) => {
                 res.render('view_todos', {message_notification: message_notification, notification: notification, todos: todos, project_name: todos[0].project_name, todos_not_assigned: todos_not_assigned})
                 })

@@ -61,7 +61,7 @@
                 if (data.length > 0){
                     var result = ''
                     let anchor = ''
-                    let title = 'Todo List  <a href="/admin/view_todos/'+project_id+'" class="btn btn-primary ml-3">View In Details</a>'  
+                    let title = 'Issues List  <a href="/admin/view_todos/'+project_id+'" class="btn btn-primary ml-3">View In Details</a>'  
                     for (let i = 0; i < data.length; i++){
                         if(data[i].status == 0){
                             anchor = '<button class="btn btn-outline-info btn-sm ml-3">open</button>'
@@ -70,7 +70,7 @@
                         }else{
                             anchor = '<button class="btn btn-outline-success btn-sm ml-3">resolved</button>'
                         }
-                        result += '<p># '+data[i].id +' '+data[i].todo +' '+ anchor+'</p>'
+                        result += '<a href="/admin/view_todos_details/'+data[i].id+'" style="text-decoration:none;"># '+data[i].id +' '+data[i].todo +' '+ anchor+'</a><br><br>'
                     }
                     result += '</div>'
                     $("#in_details").html(title)
@@ -107,7 +107,7 @@
                                 result += '<p>'+todo_done[i].task_to_do+ ' <small style="color:gray">('+ todo_done[i].work_date +')</small></p>'
                                 result += '<hr>'
                             } 
-                            result += '<h5>Assigned Todo List</h5>'
+                            result += '<h5>Assigned Issues List</h5>'
                             for (i = 0; i < todos.length; i++){
                                 if(todos[i].status == 0){
                                     button = '<button class="btn btn-outline-info btn-sm ml-3">open</button>'
@@ -116,7 +116,7 @@
                                 }else{
                                     button = '<button class="btn btn-danger btn-sm ml-3">closed</button>'
                                 }
-                                result += '<a href="/admin/view_todos_details/'+todos[i].id+'"> #'+todos[i].id+' '+todos[i].todo+' ('+todos[i].name+') </a>'+ button +'<br/><br/>'
+                                result += '<a href="/admin/view_todos_details/'+todos[i].id+'" style="text-decoration:none;"> #'+todos[i].id+' '+todos[i].todo+' ('+todos[i].name+') </a>'+ button +'<br/><br/>'
                             }
                             result += '</div>'
                             $("#in_details").html(title)

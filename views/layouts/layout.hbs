@@ -18,8 +18,8 @@
     <script type="text/javascript" src="/javascripts/popper.min.js"></script>
     <script type="text/javascript" src="/javascripts/toastr.min.js"></script>
     <script type="text/javascript" src="/javascripts/main.js"></script>
-    
-
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>    
 
     <style>
         .name_list{
@@ -58,7 +58,9 @@
         .dropdown-toggle::after{
             display: none;
         }
-        
+        .users-table{
+            max-width: 150px;
+        }
     </style>
     
 </head>
@@ -68,7 +70,7 @@
         <div class="app-header header-shadow">
             <div class="app-header__logo">
                 {{!-- <div class="logo-src"></div> --}}
-                <h4>Daily Work Upate</h4>
+                <h4>Daily Work Update</h4>
                 <div class="header__pane ml-auto">
                     <div>
                         <button type="button" class="hamburger close-sidebar-btn hamburger--elastic"
@@ -281,6 +283,13 @@
         </div>
     </div>
     </div>
+
+
+    <script>
+        $(document).ready(function() {
+            $('.js-example-basic-single').select2();
+        });
+    </script>
 </body>
 
 </html>

@@ -1,14 +1,14 @@
 <div class="row">
     <div class="col-12">
         <div class="main-card mb-3 card">
-            <div class="card-body"><h5 class="card-title">Assigned Todo List - {{project_name}}</h5>
+            <div class="card-body"><h5 class="card-title">Assigned Issues List - {{project_name}}</h5>
                 <table class="mb-0 table table-hover">
                     <thead>
                         <tr>
                             <th>#</th>
                             <th>Issues</th>
                             <th>Assigned To</th>
-                            <th>Designation</th>
+                            
                             <th>Details</th>
                             <th>Status</th>
                             <th>Remove Assigned</th>
@@ -20,11 +20,11 @@
                             <td>{{id}}</td>
                             <td>{{todo}}</td>
                             <td>{{name}}</td>
-                            <td>{{designation}}</td>
+                            
                             <td>
                                 <a href="/admin/view_todos_details/{{projects_todo_id}}" class="btn btn-primary btn-sm p-1 my-2">View Details</a>
                             </td>
-                            </td>
+                            
                             {{#if status 0}}
                             <td>
                                 <button class="btn btn-info btn-sm p-1 my-2">open</button>
@@ -55,10 +55,37 @@
         <div class="main-card mb-3 card">
             <div class="card-body"><h5 class="card-title">Not Assigned Todo List - {{project_name}}</h5>
                 <table class="mb-0 table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</td>
+                            <th>Issues</th>
+                            <th>Details</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         {{#each todos_not_assigned}}
                         <tr>
+                            <td>{{id}}</td>
                             <td>{{todo}}</td>
+                            <td>
+                                <a href="/admin/view_todos_details/{{id}}" class="btn btn-primary btn-sm p-1 my-2">View Details</a>
+                            </td>
+                            {{#if status 0}}
+                            <td>
+                                <button class="btn btn-info btn-sm p-1 my-2">open</button>
+                            </td>
+                            {{/if}}
+                            {{#if status 1}}
+                            <td>
+                                <button class="btn btn-danger btn-sm p-1 my-2">closed</button>
+                            </td>
+                            {{/if}}
+                            {{#if status 2}}
+                            <td>
+                                <button class="btn btn-success btn-sm p-1 my-2">resloved</button>
+                            </td>
+                            {{/if}}
                         </tr>
                         {{/each}}
                     </tbody>

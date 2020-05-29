@@ -16,14 +16,19 @@
                 
                 <div class="position-relative form-group" id="projectTodo">
                     <label for="project_todo" class="">Project Issue</label>
-                    {{!-- <button onclick="addnew_todo()" type="button" class="btn btn-info ml-5 my-2" style="float: right;"> + Add New</button> --}}
                     <input type="text" name="project_todo1" id="project_todo1" class="form-control mb-3" required placeholder="Issue title here..">
                     <textarea name="project_description1" id="project_description1" cols="30" class="form-control mb-3" rows="5" placeholder="Issue description here.." required></textarea>
-                    <input type="file" placeholder="File attachement here.." class="form-control-file mb-5" name="attachment1" id="project_file1" accept="image/*, .pdf">
+                    <input type="file" placeholder="File attachement here.." class="form-control-file mb-3" name="attachment1" id="project_file1" accept="image/*, .pdf">
+                    <label for="user1">Assign Programmer</label>
+                    <select name="user1" id="user1" class="form-control mb-5" multiple>
+                        
+                        {{#each users}}
+                            <option value="{{id}}">{{name}}</option>
+                        {{/each}}
+                    </select>
                 </div>
                 <button onclick="addnew_todo()" type="button" class="btn btn-info my-2" style="float: left;"> + Add New</button>
                 <button class="mt-1 btn btn-primary" type="submit" style="float: right;">Save Issues</button>
-                
             </form>
         </div>
     </div>
@@ -32,14 +37,23 @@
 <script>
     // add new input filed for project todo
     let todoID = 2
+    let users = []
+    {{#each users}}
+        users.push("{{name}}")
+    {{/each}}
     function addnew_todo(){
         let name = "project_todo" + todoID
         let description = "project_description" + todoID
         let file = "attachment" + todoID
+        let user = "user" + todoID
         var result = '<hr>'
         result += '<input type="text" name="'+name+'" id="'+name+'" class="form-control mb-3" placeholder="Issue title here..">'
         result += '<textarea name="'+description+'" id="'+description+'" cols="30" class="form-control mb-3" rows="5" placeholder="Issue description here.."></textarea>'
         result += '<input type="file"  name="'+file+'" placeholder="File attachement here.." class="form-control-file mb-3" accept="image/*, .pdf">'
+        result += '<label for="'+user+'">Assign Programmer</label><select name="'+user+'" id="'+user+'" class="form-control mb-5" multiple>'
+        
+        for(var i = 0; i < users.length; i++){ result += '<option value="'+ (i+1) +'">'+ users[i] +'</option>'}
+        result += '</select>'
         $("#projectTodo").append(result)
         todoID += 1
     }

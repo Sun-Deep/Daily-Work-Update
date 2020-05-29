@@ -139,7 +139,7 @@ router.get('/search_todos', verify_route, (req, res) => {
 // get all project todos
 router.get('/project_todos/:id', verify_route, (req, res) => {
     let project_id = req.params.id
-    con.query("SELECT projects_todo.id, projects_todo.todo, projects_todo.status FROM projects_todo JOIN assigned_projects ON assigned_projects.user_id = ? AND assigned_projects.project_id = projects_todo.project_id AND projects_todo.project_id = ?",[req.user_id, project_id],
+    con.query("SELECT projects_todo.id, projects_todo.todo, projects_todo.status FROM projects_todo JOIN assigned_projects ON assigned_projects.user_id = ? AND assigned_projects.project_id = projects_todo.project_id AND projects_todo.project_id = ? GROUP BY projects_todo.todo",[req.user_id, project_id],
     (error, todos, fields) => {
         // console.log(todos)
         return res.json(todos)

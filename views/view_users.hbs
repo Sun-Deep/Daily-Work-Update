@@ -8,7 +8,7 @@
                             <th>Name</th>
                             <th>Email</th>
                             <th>Designation</th>
-                            <th style="width: 100px;">Skills</th>
+                            <th>Skills</th>
                             <th>Role</th>
                             <th>Action</th>
                         </tr>
@@ -17,10 +17,10 @@
                         {{#each users}}
                             {{#if status 1}}
                                 <tr>
-                                    <td>{{name}}</td>
-                                    <td>{{email}}</td>
-                                    <td>{{designation}}</td>
-                                    <td>{{skills}}</td>
+                                    <td class="users-table">{{name}}</td>
+                                    <td class="users-table">{{email}}</td>
+                                    <td class="users-table">{{designation}}</td>
+                                    <td class="users-table">{{skills}}</td>
                                     <td>{{role}}</td>
                                     <td>
                                         <a href="/admin/edit/user/{{id}}" class="btn btn-warning btn-circle">

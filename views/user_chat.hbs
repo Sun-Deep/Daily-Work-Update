@@ -27,8 +27,8 @@
     </div>
     {{#if form true}}
     <form onsubmit="return sendMessage();" class="form-inline" method="POST" id="message-form">
-        <div class="position-relative form-group">
-             <input type="text" autocomplete="off" autofocus name="message" id="message" placeholder="Type a message..." class="form-control send-message mr-2" style="width: 810px;">
+        <div class="position-relative form-group" style="width:87%">
+             <input type="text" autocomplete="off" autofocus name="message" id="message" placeholder="Type a message..." class="form-control send-message mr-2 w-100">
         </div>
         {{!-- <div class="position-relative form-group">
              <input type="file" name="attachment" id="attachment" class="form-control-file mt-3 attachment">
@@ -52,10 +52,8 @@
     document.getElementById("chat-scroll").style.height = deviceHeight2 + "px";
 
     var element = document.getElementById("chat-scroll")
-    element.scrollTo({
-        top: 100,
-        behavior: 'smooth'
-    })
+    element.scrollTop = element.scrollHeight
+    
 
     function sendMessage(){
         var message = document.getElementById('message').value
